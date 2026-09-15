@@ -33,7 +33,7 @@ export async function registerPresentation(
   }
 
   const title = readText(formData, "title");
-  const liveUrl = readText(formData, "liveUrl");
+  const embedUrl = readText(formData, "embedUrl");
   const editorUrl = readText(formData, "editorUrl");
   const description = readText(formData, "description");
   const visibility = readText(formData, "visibility") as Visibility;
@@ -42,10 +42,14 @@ export async function registerPresentation(
   if (!title) {
     errors.title = "A title is required.";
   }
-  if (!liveUrl) {
-    errors.liveUrl = "A link to the live presentation is required.";
-  } else if (!URL.canParse(liveUrl)) {
-    errors.liveUrl = "This does not look like a valid URL.";
+  if (!embedUrl) {
+    errors.embedUrl = "The published embed link is required.";
+  } else if (!URL.canParse(embedUrl)) {
+    errors.embedUrl = "This does not look like a valid URL.";
+  } else if (embedUrl.includes("/edit")) {
+    // Pasting the editor link here renders a Google sign-in wall for clients.
+    errors.embedUrl =
+      "That is the editor link. Use File → Share → Publish to web → Embed and paste the pubembed link.";
   }
   if (editorUrl && !URL.canParse(editorUrl)) {
     errors.editorUrl = "This does not look like a valid URL.";
@@ -62,7 +66,7 @@ export async function registerPresentation(
     {
       title,
       description: description || null,
-      liveUrl,
+      embedUrl,
       editorUrl: editorUrl || null,
       tags: parseTags(readText(formData, "tags")),
       visibility,

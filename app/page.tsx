@@ -112,7 +112,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                 </Link>
                 <div className="flex gap-3 text-sm">
                   <a
-                    href={presentation.liveUrl}
+                    href={`/${presentation.slug}`}
                     target="_blank"
                     rel="noreferrer"
                     className="underline underline-offset-4 opacity-70 hover:opacity-100"

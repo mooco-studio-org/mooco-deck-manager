@@ -1,7 +1,8 @@
 # MOOCO Deck Manager
 
 Presentation index for MOOCO, served on a subdomain of the main site. It catalogs the
-studio's slide decks and links out to them — it does not host the slides themselves.
+studio's slide decks and serves each one from its own URL, so a deck can be sent to a
+client without duplicating the wrapper folder by hand.
 
 ## Routes
 
@@ -9,7 +10,7 @@ studio's slide decks and links out to them — it does not host the slides thems
 | --- | --- |
 | `/` | Index of all presentations: name, live link, Google Slides editable, and tags |
 | `/new` | Form to register a new presentation |
-| `/<slug>` | Detail page for one indexed presentation |
+| `/<slug>` | Full-screen wrapper that plays the deck — the link sent to clients |
 
 ## Getting started
 

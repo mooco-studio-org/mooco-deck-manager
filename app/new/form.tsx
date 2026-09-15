@@ -50,18 +50,21 @@ export function NewPresentationForm() {
       </div>
 
       <div>
-        <label htmlFor="liveUrl" className="text-sm font-medium">
-          Live presentation URL
+        <label htmlFor="embedUrl" className="text-sm font-medium">
+          Published embed link
         </label>
         <input
-          id="liveUrl"
-          name="liveUrl"
+          id="embedUrl"
+          name="embedUrl"
           type="url"
           required
-          placeholder="https://docs.google.com/presentation/d/.../pub"
+          placeholder="https://docs.google.com/presentation/d/e/2PACX-.../pubembed?"
           className={`mt-1 ${fieldClass}`}
         />
-        <FieldError message={state.errors.liveUrl} />
+        <p className="mt-1 text-xs opacity-60">
+          In Google Slides: File → Share → Publish to web → Embed, then copy the link.
+        </p>
+        <FieldError message={state.errors.embedUrl} />
       </div>
 
       <div>

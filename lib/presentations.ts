@@ -6,7 +6,7 @@ export type Presentation = {
   slug: string;
   title: string;
   description: string | null;
-  liveUrl: string;
+  embedUrl: string;
   editorUrl: string | null;
   tags: string[];
   visibility: Visibility;
@@ -21,7 +21,7 @@ export type Viewer = {
 export type PresentationDraft = {
   title: string;
   description: string | null;
-  liveUrl: string;
+  embedUrl: string;
   editorUrl: string | null;
   tags: string[];
   visibility: Visibility;
@@ -32,7 +32,7 @@ const seed: Presentation[] = [
     slug: "mooco-studio-credentials",
     title: "MOOCO Studio Credentials",
     description: "Who we are, what we do, and the work we are proudest of.",
-    liveUrl: "https://docs.google.com/presentation/d/1aBcCredentials/pub",
+    embedUrl: "https://docs.google.com/presentation/d/e/2PACX-1vTcredentials0aBc/pubembed?",
     editorUrl: "https://docs.google.com/presentation/d/1aBcCredentials/edit",
     tags: ["credentials", "studio"],
     visibility: "public",
@@ -43,7 +43,7 @@ const seed: Presentation[] = [
     slug: "brand-strategy-framework",
     title: "Brand Strategy Framework",
     description: "The method we walk clients through in the discovery phase.",
-    liveUrl: "https://docs.google.com/presentation/d/2dEfBrand/pub",
+    embedUrl: "https://docs.google.com/presentation/d/e/2PACX-1vTbrand0dEf/pubembed?",
     editorUrl: "https://docs.google.com/presentation/d/2dEfBrand/edit",
     tags: ["strategy", "branding", "method"],
     visibility: "public",
@@ -54,7 +54,7 @@ const seed: Presentation[] = [
     slug: "2026-rate-card",
     title: "2026 Rate Card",
     description: "Internal pricing reference. Not for client distribution.",
-    liveUrl: "https://docs.google.com/presentation/d/3ghRates/pub",
+    embedUrl: "https://docs.google.com/presentation/d/e/2PACX-1vTrates0ghI/pubembed?",
     editorUrl: "https://docs.google.com/presentation/d/3ghRates/edit",
     tags: ["pricing"],
     visibility: "internal",
@@ -65,7 +65,7 @@ const seed: Presentation[] = [
     slug: "motion-reel-q2",
     title: "Motion Reel Q2",
     description: null,
-    liveUrl: "https://docs.google.com/presentation/d/4ijMotion/pub",
+    embedUrl: "https://docs.google.com/presentation/d/e/2PACX-1vTmotion0ijK/pubembed?",
     editorUrl: null,
     tags: ["motion", "reel", "showcase"],
     visibility: "public",
@@ -76,7 +76,7 @@ const seed: Presentation[] = [
     slug: "onboarding-new-designers",
     title: "Onboarding New Designers",
     description: "Everything a designer needs in their first two weeks.",
-    liveUrl: "https://docs.google.com/presentation/d/5klOnboarding/pub",
+    embedUrl: "https://docs.google.com/presentation/d/e/2PACX-1vTonboarding0klM/pubembed?",
     editorUrl: "https://docs.google.com/presentation/d/5klOnboarding/edit",
     tags: ["onboarding", "team"],
     visibility: "internal",
@@ -87,7 +87,7 @@ const seed: Presentation[] = [
     slug: "packaging-case-studies",
     title: "Packaging Case Studies",
     description: "Six packaging projects, with results.",
-    liveUrl: "https://docs.google.com/presentation/d/6mnPackaging/pub",
+    embedUrl: "https://docs.google.com/presentation/d/e/2PACX-1vTpackaging0mnO/pubembed?",
     editorUrl: "https://docs.google.com/presentation/d/6mnPackaging/edit",
     tags: ["packaging", "case-study", "showcase"],
     visibility: "public",
