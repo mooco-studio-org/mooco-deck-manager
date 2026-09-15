@@ -3,14 +3,17 @@
 ## Project
 
 Presentation index for MOOCO, served on a subdomain of the main site. It catalogs the
-studio's slide decks and links out to them — it does not host the slides themselves.
+studio's slide decks and serves each one from its own URL, so a deck can be sent to a
+client without duplicating a wrapper folder by hand. The slides stay in Google Slides —
+this app never hosts their content, only the frame around it.
 
-- `/` — index of all presentations: name, link to the live presentation, link to the
-  Google Slides editable, and categories for searching and sorting.
+- `/` — index of all presentations: name, link to the deck's own page, link to the
+  Google Slides editable, and tags for searching and filtering.
 - `/new` — form to register a new presentation in the index.
-- `/<slug>` — detail page for one indexed presentation.
+- `/<slug>` — full-screen wrapper that plays the deck. This is the link sent to clients.
 
-All presentation data lives in a database (Supabase, planned — not yet integrated).
+All presentation data lives in a database (Supabase, planned — not yet integrated); until
+it is wired up, `lib/presentations.ts` backs the same interface with an in-memory store.
 The index and the `/<slug>` pages are built from it.
 
 ## Stack
@@ -26,8 +29,9 @@ The index and the `/<slug>` pages are built from it.
 
 ## Repo map
 
-- `app/` — App Router routes (`layout.tsx`, `page.tsx`, `globals.css`)
-- `public/` — static assets
+- `app/` — App Router routes (`layout.tsx`, `page.tsx`, `globals.css`, `icon.png`,
+  `[slug]/`, `new/`)
+- `lib/` — data access plus pure helpers; the only place that talks to the database
 - `docs/` — team workflow docs and the [backlog](docs/backlog/README.md)
 - Config at root: `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`,
   `postcss.config.mjs`
@@ -39,6 +43,10 @@ The index and the `/<slug>` pages are built from it.
   access in one data-access module (`lib/`) — pages never talk to Supabase directly.
 - The slug is the presentation's stable identity: generated once on creation, used as
   the route param and the database key.
+- Store Google Slides identifiers, never URLs, and rebuild the URLs from them
+  (`lib/google-slides.ts`). A deck has two unrelated ids: the published id (`2PACX-…`,
+  valid only on `/pub` and `/pubembed`) and the file id (valid only on `/edit`). Neither
+  derives from the other, so both are stored separately.
 - No secrets in client code. Supabase keys live in environment variables; anything
   exposed to the browser must be safe to be public.
 
