@@ -1,69 +1,153 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getViewer } from "@/lib/viewer";
+import { listPresentations, type Presentation } from "@/lib/presentations";
 
-export default function Home() {
+function readParam(
+  params: Record<string, string | string[] | undefined>,
+  key: string,
+): string {
+  const value = params[key];
+  return (Array.isArray(value) ? value[0] : value) ?? "";
+}
+
+function matches(presentation: Presentation, query: string, tag: string): boolean {
+  const haystack = [
+    presentation.title,
+    presentation.description ?? "",
+    ...presentation.tags,
+  ]
+    .join(" ")
+    .toLowerCase();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    haystack.includes(query.toLowerCase()) &&
+    (tag === "" || presentation.tags.includes(tag))
+  );
+}
+
+export default async function Home({ searchParams }: PageProps<"/">) {
+  const params = await searchParams;
+  const query = readParam(params, "q");
+  const tag = readParam(params, "tag");
+
+  const viewer = await getViewer();
+  const presentations = await listPresentations(viewer);
+  const visible = presentations.filter((p) => matches(p, query, tag));
+
+  const tags = [...new Set(presentations.flatMap((p) => p.tags))].sort();
+
+  return (
+    <main className="mx-auto w-full max-w-4xl px-6 py-12">
+      <header className="flex flex-wrap items-baseline justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">MOOCO Decks</h1>
+          <p className="mt-1 text-sm opacity-60">
+            {presentations.length} presentations indexed
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        <Link
+          href="/new"
+          className="rounded-md border border-current/20 px-4 py-2 text-sm font-medium transition hover:bg-current/5"
+        >
+          Register a deck
+        </Link>
+      </header>
+
+      <form className="mt-8 flex gap-2">
+        {tag && <input type="hidden" name="tag" value={tag} />}
+        <input
+          type="search"
+          name="q"
+          defaultValue={query}
+          placeholder="Search by name, description or tag"
+          aria-label="Search presentations"
+          className="w-full rounded-md border border-current/20 bg-transparent px-3 py-2 text-sm outline-none focus:border-current/50"
+        />
+        <button
+          type="submit"
+          className="rounded-md border border-current/20 px-4 py-2 text-sm font-medium transition hover:bg-current/5"
+        >
+          Search
+        </button>
+      </form>
+
+      <nav className="mt-4 flex flex-wrap gap-2" aria-label="Filter by tag">
+        {tags.map((name) => {
+          const active = name === tag;
+          const href = active
+            ? { pathname: "/", query: query ? { q: query } : {} }
+            : { pathname: "/", query: query ? { q: query, tag: name } : { tag: name } };
+
+          return (
+            <Link
+              key={name}
+              href={href}
+              aria-pressed={active}
+              className={`rounded-full border px-3 py-1 text-xs transition ${
+                active
+                  ? "border-current bg-current/10 font-medium"
+                  : "border-current/20 opacity-70 hover:opacity-100"
+              }`}
+            >
+              {name}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {visible.length === 0 ? (
+        <p className="mt-12 text-sm opacity-60">
+          No presentations match this search.
+        </p>
+      ) : (
+        <ul className="mt-8 divide-y divide-current/10 border-y border-current/10">
+          {visible.map((presentation) => (
+            <li key={presentation.slug} className="py-5">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <Link
+                  href={`/${presentation.slug}`}
+                  className="text-lg font-medium underline-offset-4 hover:underline"
+                >
+                  {presentation.title}
+                </Link>
+                <div className="flex gap-3 text-sm">
+                  <a
+                    href={presentation.liveUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline underline-offset-4 opacity-70 hover:opacity-100"
+                  >
+                    Present
+                  </a>
+                  {presentation.editorUrl && (
+                    <a
+                      href={presentation.editorUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline underline-offset-4 opacity-70 hover:opacity-100"
+                    >
+                      Edit
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {presentation.description && (
+                <p className="mt-1 text-sm opacity-70">{presentation.description}</p>
+              )}
+
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-xs opacity-60">
+                {presentation.visibility === "internal" && (
+                  <span className="rounded-full border border-current/30 px-2 py-0.5">
+                    internal
+                  </span>
+                )}
+                {presentation.tags.join(" · ")}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
   );
 }
