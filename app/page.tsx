@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getViewer } from "@/lib/viewer";
 import { listPresentations, type Presentation } from "@/lib/presentations";
+import { editorUrl } from "@/lib/google-slides";
 
 function readParam(
   params: Record<string, string | string[] | undefined>,
@@ -119,9 +120,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
                   >
                     Present
                   </a>
-                  {presentation.editorUrl && (
+                  {presentation.fileId && (
                     <a
-                      href={presentation.editorUrl}
+                      href={editorUrl(presentation.fileId)}
                       target="_blank"
                       rel="noreferrer"
                       className="underline underline-offset-4 opacity-70 hover:opacity-100"

@@ -50,35 +50,34 @@ export function NewPresentationForm() {
       </div>
 
       <div>
-        <label htmlFor="embedUrl" className="text-sm font-medium">
-          Published embed link
+        <label htmlFor="publishedLink" className="text-sm font-medium">
+          Published link
         </label>
         <input
-          id="embedUrl"
-          name="embedUrl"
-          type="url"
+          id="publishedLink"
+          name="publishedLink"
           required
-          placeholder="https://docs.google.com/presentation/d/e/2PACX-.../pubembed?"
+          placeholder="https://docs.google.com/presentation/d/e/2PACX-.../pub?start=false"
           className={`mt-1 ${fieldClass}`}
         />
         <p className="mt-1 text-xs opacity-60">
-          In Google Slides: File → Share → Publish to web → Embed, then copy the link.
+          In Google Slides: File → Share → Publish to web, then paste the link as-is —
+          any of its forms works.
         </p>
-        <FieldError message={state.errors.embedUrl} />
+        <FieldError message={state.errors.publishedLink} />
       </div>
 
       <div>
-        <label htmlFor="editorUrl" className="text-sm font-medium">
-          Google Slides editable URL <span className="opacity-50">(optional)</span>
+        <label htmlFor="editorLink" className="text-sm font-medium">
+          Editor link <span className="opacity-50">(optional)</span>
         </label>
         <input
-          id="editorUrl"
-          name="editorUrl"
-          type="url"
+          id="editorLink"
+          name="editorLink"
           placeholder="https://docs.google.com/presentation/d/.../edit"
           className={`mt-1 ${fieldClass}`}
         />
-        <FieldError message={state.errors.editorUrl} />
+        <FieldError message={state.errors.editorLink} />
       </div>
 
       <div>

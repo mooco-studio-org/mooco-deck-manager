@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getViewer } from "@/lib/viewer";
 import { getPresentationBySlug } from "@/lib/presentations";
+import { embedUrl } from "@/lib/google-slides";
 
 export async function generateMetadata({
   params,
@@ -30,7 +31,7 @@ export default async function PresentationPage({ params }: PageProps<"/[slug]">)
   return (
     <iframe
       title={presentation.title}
-      src={presentation.embedUrl}
+      src={embedUrl(presentation.publishedId)}
       allow="autoplay; fullscreen"
       allowFullScreen
       className="fixed inset-0 h-full w-full border-0 bg-[#1c1c1c]"

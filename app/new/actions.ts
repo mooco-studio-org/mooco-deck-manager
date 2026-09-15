@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getViewer } from "@/lib/viewer";
 import { createPresentation, type Visibility } from "@/lib/presentations";
+import { extractFileId, extractPublishedId } from "@/lib/google-slides";
 
 export type FormState = {
   errors: Record<string, string>;
@@ -33,8 +34,8 @@ export async function registerPresentation(
   }
 
   const title = readText(formData, "title");
-  const embedUrl = readText(formData, "embedUrl");
-  const editorUrl = readText(formData, "editorUrl");
+  const publishedLink = readText(formData, "publishedLink");
+  const editorLink = readText(formData, "editorLink");
   const description = readText(formData, "description");
   const visibility = readText(formData, "visibility") as Visibility;
 
@@ -42,23 +43,29 @@ export async function registerPresentation(
   if (!title) {
     errors.title = "A title is required.";
   }
-  if (!embedUrl) {
-    errors.embedUrl = "The published embed link is required.";
-  } else if (!URL.canParse(embedUrl)) {
-    errors.embedUrl = "This does not look like a valid URL.";
-  } else if (embedUrl.includes("/edit")) {
-    // Pasting the editor link here renders a Google sign-in wall for clients.
-    errors.embedUrl =
-      "That is the editor link. Use File → Share → Publish to web → Embed and paste the pubembed link.";
+  const publishedId = extractPublishedId(publishedLink);
+  if (!publishedLink) {
+    errors.publishedLink = "The published link is required.";
+  } else if (!publishedId) {
+    // Pasting the editor link here would render a Google sign-in wall for clients.
+    errors.publishedLink = extractFileId(publishedLink)
+      ? "That is the editor link. Use File → Share → Publish to web and paste the link it gives you."
+      : "No published presentation id found in that link.";
   }
-  if (editorUrl && !URL.canParse(editorUrl)) {
-    errors.editorUrl = "This does not look like a valid URL.";
+
+  const fileId = editorLink ? extractFileId(editorLink) : null;
+  if (editorLink && !fileId) {
+    errors.editorLink = extractPublishedId(editorLink)
+      ? "That is the published link. Paste the address bar URL from the open presentation."
+      : "No presentation id found in that link.";
   }
   if (visibility !== "internal" && visibility !== "public") {
     errors.visibility = "Pick a visibility.";
   }
 
-  if (Object.keys(errors).length > 0) {
+  // publishedId is only ever null alongside an error, but narrowing it here keeps the
+  // draft free of a cast.
+  if (Object.keys(errors).length > 0 || !publishedId) {
     return { errors };
   }
 
@@ -66,8 +73,8 @@ export async function registerPresentation(
     {
       title,
       description: description || null,
-      embedUrl,
-      editorUrl: editorUrl || null,
+      publishedId,
+      fileId,
       tags: parseTags(readText(formData, "tags")),
       visibility,
     },
