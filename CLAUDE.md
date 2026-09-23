@@ -43,8 +43,10 @@ The index and the `/<slug>` pages are built from it.
 - Server Components by default; add `"use client"` only where interactivity requires it.
 - Fetch presentation data in Server Components / route handlers. Keep all database
   access in one data-access module (`lib/`) — pages never talk to Supabase directly.
-- The slug is the presentation's stable identity: generated once on creation, used as
-  the route param and the database key.
+- The slug is a deck's public identity: generated once on creation, never changed, and
+  used as the `/<slug>` route param. Only decks have one. The database key is a separate
+  generated `id` that every entry has, decks and assets alike; edit and delete address
+  entries by `id`. Until Supabase lands, the in-memory store still keys by slug.
 - Store Google Slides identifiers, never URLs, and rebuild the URLs from them
   (`lib/google-slides.ts`). A deck has two unrelated ids: the published id (`2PACX-…`,
   valid only on `/pub` and `/pubembed`) and the file id (valid only on `/edit`). Neither

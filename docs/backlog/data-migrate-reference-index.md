@@ -33,8 +33,9 @@ migrating twice.
   reference doc §13.
 - Write it as a one-off script that emits rows for review before inserting — the id
   recovery will have gaps that need a human decision.
-- Slugs: generated with `lib/slug.ts` from the entry name, once, as for any new entry.
-  Worth checking for collisions (several entries share names like "Capabilities").
+- Slugs (decks only): generated with `lib/slug.ts` from the entry name, once, as for any
+  new deck. Worth checking for collisions (several entries share names like
+  "Capabilities"). Assets get no slug.
 - The wrapper URLs have already been sent to clients. Redirecting
   `mooco.studio/<Folder>` to this app's `/<slug>` is a main-site change, but the
   old-URL → slug mapping falls out of this migration and should be kept.

@@ -15,9 +15,10 @@ small, not because it is optional.
 
 ## Notes
 
-- The slug is the stable identity and must **not** change on edit, even when the title
-  does. This is an architecture rule in `CLAUDE.md`, and changing it would break every
-  shared link.
+- Address entries by their database `id`, not by slug — assets have no slug (see
+  [decks and assets](data-deck-and-asset-entries.md)).
+- A deck's slug must **not** change on edit, even when the title does. This is an
+  architecture rule in `CLAUDE.md`, and changing it would break every shared link.
 - Every mutation needs its authorisation check inside the Server Action itself. Server
   Actions are POST endpoints reachable directly, so guarding the page is not enough.
 - Prefer a soft delete if entries are ever referenced from outside this app; decide when

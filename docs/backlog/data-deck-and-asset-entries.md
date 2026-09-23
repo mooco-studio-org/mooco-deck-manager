@@ -26,12 +26,19 @@ Decided design:
   anywhere. This is the one sanctioned exception to the ids-only rule (see `CLAUDE.md`).
 - Model it as a discriminated union on `type: "deck" | "asset"` in TypeScript, so each
   type's required fields are enforced by the compiler.
-- **Assets get a slug too.** The slug is the database key and edit/delete need it.
-  `/<slug>` for an asset redirects to its `visitUrl`, so every link sent out starts on the
-  subdomain and the target can change without re-sending links.
+- **Only decks have a slug.** Every entry has a generated `id` (uuid) as its database key,
+  which edit and delete use. `slug` is unique and nullable, required only for decks — an
+  asset has no page on the subdomain, so it needs no URL here. `/<slug>` looks up decks
+  only and returns 404 otherwise.
+- Trade-off accepted: asset links point straight to their host (Drive, …), so moving a file
+  means re-sending its link. If subdomain links for assets are ever wanted, adding a slug
+  to them later breaks nothing.
 - One table with a `type` column, plus database check constraints per type
-  (`published_id` not null for decks, `visit_url` not null for assets). The index and
-  search list both types together, so two tables would only add joins.
+  (`slug` and `published_id` not null for decks, `visit_url` not null for assets). The
+  index and search list both types together, so two tables would only add joins.
+- Changing an entry's type on edit would drop or mint a slug; a deck turning into an asset
+  breaks its shared links. Decide whether to allow it when building
+  [edit and delete](feature-edit-delete-presentations.md).
 - Form: a "Deck / Asset" selector that swaps the visible fields. That toggle needs a small
   client component; the Server Action must still validate per the submitted `type` and
   never trust which fields the form happened to show.
