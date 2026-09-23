@@ -1,0 +1,2504 @@
+<title>MOOCO Links</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&display=swap">
+
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #f4f4f2;
+    --border: #e8e8e8;
+    --border-strong: #d4d4d4;
+    --text: #000000;
+    --text-muted: #8e8e8e;
+    --text-faint: #b8b8b8;
+    --card-bg: #0e0e0d;
+    --card-surface: #1a1a19;
+    --card-border: #262624;
+    --card-text: #f4f4f2;
+    --card-text-muted: #8a8a86;
+    --card-text-faint: #55554f;
+    --accent: #ffe000;
+    --danger: #d43d3d;
+    --ok: #2f8f3a;
+    --sans: "Onest", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+  body { padding-bottom: 96px; }
+
+  a { color: inherit; text-decoration: none; }
+  button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 1.5px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 88px;
+    padding: 0 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .brand svg {
+    height: 42px;
+    width: auto;
+    display: block;
+    fill: var(--text);
+    flex-shrink: 0;
+  }
+  .header-spacer { flex: 1; }
+  .header-meta {
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .header-meta strong { color: var(--text); font-weight: 600; }
+
+  .search-wrap {
+    position: relative;
+    width: 240px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    pointer-events: none;
+  }
+  .search {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    color: var(--text);
+    padding: 10px 14px 10px 38px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .search::placeholder { color: var(--text-muted); }
+  .search:focus { outline: none; border-color: var(--text); }
+
+  .add-btn {
+    padding: 11px 20px;
+    background: var(--text);
+    color: var(--bg);
+    border: 1.5px solid var(--text);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .add-btn:hover { background: #1a1a1a; }
+
+  .save-state {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .save-state.visible { display: inline-flex; }
+  .save-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-faint); }
+  .save-dot.saving { background: var(--text); animation: pulse 1s ease-in-out infinite; }
+  .save-dot.saved { background: var(--ok); }
+  .save-dot.error { background: var(--danger); }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    padding: 72px 0 40px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  .eyebrow::before {
+    content: "◆";
+    color: var(--text-faint);
+    font-size: 10px;
+  }
+  .hero-title {
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    text-wrap: balance;
+    max-width: 900px;
+  }
+
+  /* ---------- Category cards ---------- */
+  .categories-section {
+    padding: 56px 0 24px;
+  }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    text-align: left;
+    padding: 24px 26px;
+    background: var(--surface-alt);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    color: var(--text);
+    transition: background 0.15s, border-color 0.15s, transform 0.08s;
+    min-height: 130px;
+  }
+  .cat-card:hover {
+    border-color: var(--text-muted);
+    background: #ececea;
+  }
+  .cat-card:active { transform: translateY(1px); }
+  .cat-card.is-selected {
+    background: var(--card-bg);
+    border-color: var(--card-bg);
+    color: var(--card-text);
+  }
+  .cat-card.is-selected:hover { background: #1a1a19; }
+  .cat-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cat-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .cat-card.is-selected .cat-group-label { color: var(--card-text-faint); }
+  .cat-count-pill {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 4px 10px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 100px;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .cat-card.is-selected .cat-count-pill {
+    background: rgba(255,255,255,0.1);
+    color: var(--card-text-muted);
+  }
+  .cat-name {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  /* ---------- Deck cards ---------- */
+  .decks-section {
+    padding: 40px 0 20px;
+  }
+  .decks-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .decks-title {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .decks-subtitle {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .decks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .deck-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    color: var(--card-text);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+  .deck-card:hover { transform: translateY(-2px); }
+
+  .deck-thumb {
+    aspect-ratio: 16 / 10;
+    display: grid;
+    place-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .deck-thumb-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    z-index: 2;
+    display: block;
+  }
+  .deck-thumb-letter {
+    font-size: clamp(80px, 12vw, 128px);
+    font-weight: 800;
+    color: rgba(255,255,255,0.14);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    user-select: none;
+    position: relative;
+    z-index: 1;
+  }
+  .deck-thumb-brand {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    z-index: 3;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+  }
+  .deck-thumb-brand::before {
+    content: "◆";
+    margin-right: 6px;
+    font-size: 8px;
+    opacity: 0.7;
+  }
+
+  .deck-body {
+    padding: 22px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+  .deck-eyebrow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--card-text-muted);
+  }
+  .deck-eyebrow-meta {
+    display: flex;
+    gap: 6px;
+  }
+  .deck-meta-pill {
+    padding: 3px 10px;
+    background: var(--card-surface);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--card-text-muted);
+  }
+  .deck-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: var(--card-text);
+  }
+  .deck-desc {
+    font-size: 13.5px;
+    color: var(--card-text-muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .deck-desc.empty {
+    color: var(--card-text-faint);
+    font-style: italic;
+  }
+  .deck-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 14px;
+  }
+
+  .bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    border: 1.5px solid var(--card-border);
+    background: transparent;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--card-text);
+    line-height: 1;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+    white-space: nowrap;
+  }
+  .bubble:hover {
+    background: var(--card-text);
+    color: var(--card-bg);
+    border-color: var(--card-text);
+  }
+  .bubble.bubble-primary {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+  .bubble.bubble-primary:hover {
+    background: #ffee5c;
+    border-color: #ffee5c;
+  }
+  .bubble.bubble-empty {
+    color: var(--card-text-faint);
+    border-color: var(--card-border);
+    border-style: dashed;
+    background: transparent;
+    cursor: default;
+    gap: 6px;
+  }
+  .bubble.bubble-empty svg { color: var(--danger); opacity: 0.7; }
+  .bubble.bubble-empty:hover {
+    background: transparent;
+    color: var(--card-text-faint);
+    border-color: var(--card-border);
+  }
+  .bubble.copied {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  .deck-icon-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: auto;
+  }
+  .icon-bubble {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--card-border);
+    background: transparent;
+    border-radius: 100px;
+    color: var(--card-text-muted);
+    transition: color 0.12s, border-color 0.12s, background 0.12s;
+  }
+  .icon-bubble:hover {
+    color: var(--card-text);
+    border-color: var(--card-text);
+  }
+  .icon-bubble.danger:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  .empty-state {
+    padding: 80px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    animation: fadeIn 0.14s ease-out;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    animation: slideUp 0.16s ease-out;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.12);
+  }
+  @keyframes slideUp { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-head {
+    padding: 24px 28px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .modal-close { color: var(--text-muted); padding: 4px; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .field input, .field textarea, .field select {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 11px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none;
+    border-color: var(--text);
+  }
+  .field-hint { font-size: 11.5px; color: var(--text-muted); }
+  .cat-picker { display: flex; gap: 8px; }
+  .cat-picker select, .cat-picker input { flex: 1; }
+  .cat-picker input[hidden] { display: none; }
+  .modal-foot {
+    padding: 16px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-alt);
+    border-radius: 0 0 20px 20px;
+  }
+  .modal-foot .right { display: flex; gap: 8px; }
+  .btn-ghost {
+    padding: 9px 16px;
+    background: transparent;
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .btn-ghost:hover { border-color: var(--text); }
+  .btn-primary {
+    padding: 9px 18px;
+    background: var(--text);
+    color: var(--bg);
+    border: 1.5px solid var(--text);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: #1a1a1a; }
+  .btn-danger {
+    padding: 9px 16px;
+    background: transparent;
+    color: var(--danger);
+    border: 1.5px solid rgba(212, 61, 61, 0.4);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .btn-danger:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: var(--bg);
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    z-index: 200;
+    animation: toastIn 0.2s ease-out;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+  .toast.error { background: var(--danger); color: #fff; }
+  @keyframes toastIn { from { transform: translate(-50%, 10px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1100px) {
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    .decks-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 700px) {
+    .container { padding: 0 20px; }
+    .header-row { padding: 0 20px; height: 68px; gap: 12px; }
+    .brand svg { height: 32px; }
+    .search-wrap { width: 160px; }
+    .add-btn { padding: 9px 14px; font-size: 12px; }
+    .header-meta { display: none; }
+    .hero { padding: 48px 0 24px; }
+    .cat-grid { grid-template-columns: 1fr; }
+    .decks-grid { grid-template-columns: 1fr; }
+    .cat-name { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<script id="links-data" type="application/json">
+{
+  "activeSheet": "evergreen",
+  "sheets": {
+    "evergreen": {
+      "label": "Evergreen",
+      "categories": [
+        {
+          "groupHeader": "Portfolio",
+          "name": "Capabilities",
+          "links": [
+            {
+              "name": "Capabilities",
+              "url": "https://mooco.studio/Capabilities/",
+              "editableUrl": "https://docs.google.com/presentation/d/1VznDNVPSD6JvUtOOGu1HyPK91ZJ947H_9fyJT_CO2X8/edit?slide=id.g3f543fd47b5_1_5236",
+              "description": "Deck general de capacidades del estudio, versión 2025.",
+              "tags": [
+                "LOOM",
+                "Case Study",
+                "P+",
+                "Paramount",
+                "USCD",
+                "Modi",
+                "Tennis",
+                "Tecweek",
+                "Messi",
+                "Animation Cafe",
+                "Mujeres Latinas",
+                "NBC",
+                "Disney",
+                "MODO",
+                "Angry Birds",
+                "Shade",
+                "Nike",
+                "ESPN",
+                "Pandora",
+                "Charms",
+                "DVR",
+                "Design",
+                "AI",
+                "IA",
+                "3D",
+                "Animation",
+                "Animacion",
+                "Ilustrations",
+                "Ilustracion",
+                "Branding",
+                "Gaming",
+                "Games",
+                "Sports",
+                "Deportes",
+                "Motion Graphics",
+                "Primo Entertainment",
+                "Dot Dot Dash"
+              ],
+              "thumb": "capabilities.webp"
+            },
+            {
+              "name": "LOOM",
+              "url": "https://mooco.studio/Portfolio/LOOM/",
+              "editableUrl": "https://docs.google.com/presentation/d/1LV6XY4IOjIrBNfnZN9BQMls1ONLjcyICoFTNlakgb70/edit?usp=drive_web&ouid=105525288729819420077",
+              "description": "Presentación del servicio/producto LOOM.",
+              "tags": [
+                "LOOM",
+                "Large Output Optimization Model",
+                "Automatizacion",
+                "Automation",
+                "Airtable",
+                "Frame.io",
+                "AI QC",
+                "Pipeline",
+                "Workflow",
+                "Templates"
+              ],
+              "thumb": "loom.webp"
+            },
+            {
+              "name": "Brand Systems",
+              "url": "https://mooco.studio/Capabilities/BrandSystems/",
+              "editableUrl": "https://docs.google.com/presentation/d/1139dU3qTi3T5oe3H9RwNXxJRWtzXgL2LZt29Z6U0Blo/edit?slide=id.g3f81c8e38c6_0_3695",
+              "description": "Servicio de sistemas de marca integral (branding).",
+              "tags": [
+                "Brand Systems",
+                "Design System",
+                "Tecweek",
+                "Branding",
+                "Motion Graphics",
+                "TV Spot",
+                "AI Pipeline",
+                "Generative Visuals",
+                "3D",
+                "AI",
+                "IA",
+                "Primo Entertainment",
+                "Messi",
+                "Illustration",
+                "Ilustracion",
+                "Digital Campaign",
+                "OOH Content",
+                "Experience",
+                "Installation",
+                "Creative Direction",
+                "NBC",
+                "Telemundo",
+                "Mujeres Latinas",
+                "Billboard",
+                "Scalable System"
+              ],
+              "thumb": "brand-systems.webp"
+            },
+            {
+              "name": "Digital",
+              "url": "https://mooco.studio/Capabilities/DigitalSolutions/",
+              "editableUrl": "https://docs.google.com/presentation/d/12nV3BiytLjIgdGijNtt5LqyIRVgGtyaI_npyCMdT_iU/edit?slide=id.g3f5cb07f181_0_898",
+              "description": "Soluciones digitales: web, apps y productos digitales.",
+              "tags": [
+                "Digital Solutions",
+                "Pandora",
+                "Charms",
+                "Red Bull",
+                "Pollen",
+                "Wacom",
+                "Paramount+",
+                "P+",
+                "THEM",
+                "Digital Campaign",
+                "Social Media",
+                "3D",
+                "Animation",
+                "Animacion",
+                "Branding"
+              ],
+              "thumb": "digital.webp"
+            },
+            {
+              "name": "Creative Production",
+              "url": "https://mooco.studio/Capabilities/CreativeProduction/",
+              "editableUrl": "https://docs.google.com/presentation/d/1uKAEdtwkD3m4OGvIbyT4ANsBZDab0NvuHr1aHxCsTFE/edit?usp=drive_link",
+              "description": "Servicio de producción creativa end-to-end.",
+              "tags": [
+                "Creative Production",
+                "Nike",
+                "Dot Dot Dash",
+                "ESPN",
+                "Disney",
+                "Sports",
+                "Deportes",
+                "Pandora",
+                "Charms",
+                "Rovio",
+                "Angry Birds",
+                "Shade",
+                "Animation",
+                "Animacion",
+                "3D",
+                "Fashion",
+                "Innovation",
+                "Design System",
+                "Campaign Video",
+                "DOOH",
+                "Illustration",
+                "Ilustracion",
+                "Motion Graphics",
+                "Seasonal Campaign",
+                "Art Direction",
+                "Product Video",
+                "VFX",
+                "Creative Direction",
+                "Gaming"
+              ],
+              "thumb": "creative-production.webp"
+            },
+            {
+              "name": "AI Studio",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1LRxErUT0CsiKEfk1uIpsX_wF83nUpTluXGtjDP2jtWg/edit?slide=id.g3f8d84796eb_0_0",
+              "description": "Capacidades de IA aplicada a proyectos creativos.",
+              "tags": [
+                "AI Studio",
+                "IA",
+                "USDC",
+                "Blink",
+                "Almond Board",
+                "Innovationarium",
+                "Pampa Films",
+                "Tennis Match",
+                "Generative AI",
+                "IA Generativa",
+                "Motion Graphics",
+                "TV Spot",
+                "AI Pipeline",
+                "Generative Visuals",
+                "Design System",
+                "Video Gen AI",
+                "Digital Campaign",
+                "Creative Direction",
+                "3D"
+              ],
+              "thumb": "ai-studio.webp"
+            }
+          ]
+        },
+        {
+          "name": "Craft",
+          "links": [
+            {
+              "name": "Craft Portafolio",
+              "url": "https://mooco.studio/Portfolio/",
+              "editableUrl": "https://docs.google.com/presentation/d/11r2zmOtH2SydvVTjlUM7-4k_VL0Wa5plKuvfCjFsC7Y/edit",
+              "description": "Portfolio general de trabajos de craft del estudio, que reúne ilustración, animación, diseño gráfico y 3D.",
+              "tags": [
+                "Portfolio",
+                "Craft",
+                "Branding",
+                "Illustration",
+                "Ilustracion",
+                "Animation",
+                "Animacion",
+                "3D",
+                "Graphic Design",
+                "Diseño Grafico",
+                "Motion Graphics",
+                "Red Bull",
+                "Nike",
+                "ESPN",
+                "Disney",
+                "Pandora",
+                "Rovio",
+                "Spotify",
+                "Tecweek",
+                "Google",
+                "Microsoft",
+                "Ubisoft",
+                "Primo Entertainment",
+                "Messi",
+                "Fan Life",
+                "Filo News",
+                "Chime Tv",
+                "Bamv",
+                "Radiografias",
+                "Batallas de Gallos",
+                "Wings for Life",
+                "Dot Dot Dash",
+                "Call Of Duty",
+                "Coda Shop",
+                "Craft Your Batlle",
+                "Mujeres Asesinas",
+                "Univision",
+                "Wacom",
+                "HP",
+                "Monks",
+                "EuroCopa",
+                "Vix",
+                "Snapchat",
+                "Animation Cafe",
+                "Google",
+                "Monks",
+                "Pandora",
+                "Bugatti",
+                "Rimac",
+                "Grey",
+                "Angry Birds",
+                "Rovio",
+                "Microsoft",
+                "Monks",
+                "TJX",
+                "THEM",
+                "Cultural Pillars",
+                "Gwens Getaway",
+                "Ubisoft",
+                "Marvel",
+                "Chicha",
+                "Disney Product",
+                "Animation",
+                "Cafe",
+                "Mickey & Friends",
+                "Holidays",
+                "Wacom",
+                "Back to School",
+                "Fernet",
+                "Branca",
+                "Vix Motions",
+                "Paramount+",
+                "Masterchef",
+                "Viacom",
+                "Bad Bunny",
+                "Libertadores",
+                "Conmebol"
+              ],
+              "thumb": "craft-portafolio.webp"
+            },
+            {
+              "name": "Illustration",
+              "url": "https://mooco.studio/Portfolio/Illustration/",
+              "editableUrl": "https://docs.google.com/presentation/d/1W5irFJclCpmU4W7m4fhojRIRoxXVxWkCBU90gEBmwAI/edit?usp=drive_web&ouid=105525288729819420077",
+              "description": "Portfolio de ilustración: estilos y proyectos destacados del estudio.",
+              "tags": [
+                "Illustration",
+                "Ilustracion",
+                "Disney",
+                "Animation Cafe",
+                "Wacom",
+                "Holidays",
+                "Mickey & Friends",
+                "Red Bull",
+                "Wings for Life",
+                "Character Design",
+                "Digital Campaign",
+                "Generative Visuals",
+                "Design System",
+                "Art Direction",
+                "Creative Direction",
+                "Consumer Products",
+                "Cerati",
+                "VR",
+                "experience",
+                "Sony Music",
+                "canada",
+                "Branca",
+                "Tresbien",
+                "Encanto"
+              ],
+              "thumb": "illustration.webp"
+            },
+            {
+              "name": "Animation",
+              "url": "https://mooco.studio/Craft/Animation/",
+              "editableUrl": "https://docs.google.com/presentation/d/1ic3_aVZyT__XKbd3wZWSwZrVL-0iI0YHKyBvQhGcinI/edit?usp=drive_link",
+              "description": "Portfolio de animación 2D/3D del estudio.",
+              "tags": [
+                "Animation",
+                "Animacion",
+                "Craft",
+                "Motion Graphics",
+                "2D",
+                "3D",
+                "Branding",
+                "Style Guides",
+                "Key Visuals",
+                "Branca",
+                "Tresbien",
+                "Chime tv",
+                "Radiografias",
+                "Batallas de Gallos",
+                "Wings for Life",
+                "Red Bull",
+                "Wacom",
+                "Snapchat",
+                "Call Of Duty",
+                "Coda Shop",
+                "Craft Your Batlle",
+                "Mujeres Asesinas",
+                "Univision",
+                "Euro Copa",
+                "Vix",
+                "Animation Cafe",
+                "Disney",
+                "Google",
+                "Monks",
+                "Microsoft",
+                "TJX",
+                "THEM",
+                "Mystery",
+                "Bebopbee",
+                "Puzzles and Passports",
+                "Boutique",
+                "SYÖMAN",
+                "Rovio",
+                "Amgry Birds",
+                "Ubisoft",
+                "Gwen's Getawey",
+                "Angry Birds Journey",
+                "Sony Music",
+                "Cerati VR Experience",
+                "Mystery"
+              ],
+              "thumb": "animation.webp"
+            },
+            {
+              "name": "Graphic Design",
+              "url": "https://mooco.studio/Craft/GraphicDesign/",
+              "editableUrl": "https://docs.google.com/presentation/d/1Fh0vRqGLClhoo0iF9DpVtLlLgi-4eori7Wxb6GV5VMc/edit?usp=drive_link",
+              "description": "Portfolio de diseño gráfico y piezas de marca.",
+              "tags": [
+                "Graphic Design",
+                "Diseno Grafico",
+                "BAMV",
+                "Messi",
+                "Primo Entertainment",
+                "ESPN",
+                "My Code",
+                "Tecweek",
+                "Branding",
+                "Rebranding",
+                "TV Spot",
+                "Generative Visuals",
+                "Creative Direction",
+                "Digital Campaign",
+                "OOH Content",
+                "Design System",
+                "Illustration",
+                "Ilustracion",
+                "Experience",
+                "Filo News",
+                "VME Tv",
+                "Chime TV",
+                "Artear",
+                "Telenoche"
+              ],
+              "thumb": "graphic-design.webp"
+            },
+            {
+              "name": "3D Design",
+              "url": "https://mooco.studio/Craft/3D/",
+              "editableUrl": "https://docs.google.com/presentation/d/1XLkdtzyFNy7D-21P6ahbbqqzLYWWRsZsaIK4YeyUAlo/edit?usp=drive_link",
+              "description": "Portfolio de diseño y modelado 3D.",
+              "tags": [
+                "3D",
+                "Pandora",
+                "Bugatti Rimac",
+                "Rovio",
+                "Angry Birds",
+                "Microsoft",
+                "ESPN",
+                "Sonic Rumble",
+                "Ubisoft",
+                "Games",
+                "Gaming",
+                "Product Modeling",
+                "Cinematics",
+                "Codi",
+                "Pandora Charms Festival",
+                "Grey",
+                "Rovio - Angry Birds",
+                "Monks",
+                "Dogde",
+                "Sega",
+                "TJX",
+                "THEM",
+                "Gwen's Getawey"
+              ],
+              "thumb": "3d-design.webp"
+            }
+          ]
+        },
+        {
+          "name": "Special Decks",
+          "links": [
+            {
+              "name": "Games",
+              "url": "https://mooco.studio/Portfolio/Games/",
+              "editableUrl": "https://docs.google.com/presentation/d/1F6f2JpaEGcPRJEllFXcmulmCi3pH_A8Kgv2v1LofQmg/edit",
+              "description": "Reel de proyectos de videojuegos, versión 2024.",
+              "tags": [
+                "Games",
+                "Juegos",
+                "Gaming",
+                "Rovio",
+                "Sega",
+                "MADBOX",
+                "Metacore",
+                "Ubisoft",
+                "Angry Birds",
+                "Sonic Rumble",
+                "Character Production",
+                "Trailers",
+                "Marketing Assets",
+                "Cinematics",
+                "Pocket Champs",
+                "Lessmore",
+                "Eat Venture",
+                "Erepublik Labs",
+                "War & Peace",
+                "EA Games",
+                "PVZ Replanted",
+                "Gameplay",
+                "Style Variations",
+                "Bebopbee",
+                "Puzzles and Passports",
+                "Boutique",
+                "Ubisoft",
+                "Gwen's Getawey",
+                "Small Town Murderers",
+                "Supernatural City",
+                "QDE Studio",
+                "Pet Panic",
+                "Boutique",
+                "FAZER PATUKAT",
+                "SYÖMAN",
+                "Metacore",
+                "MERGE MANSION",
+                "Grey",
+                "Bugatti",
+                "Darkfire",
+                "Hardhead Squad"
+              ],
+              "thumb": "games.webp"
+            },
+            {
+              "name": "Live Events",
+              "url": "https://mooco.studio/Portfolio/LiveEvents/",
+              "editableUrl": "https://docs.google.com/presentation/d/1X3W0asg8Szd2ArBwtjTJCD7jr062FcCOlZBQfTqaSBk/edit?slide=id.g3f573ae3f94_0_2420",
+              "description": "Portfolio de producción para eventos en vivo.",
+              "tags": [
+                "Live Events",
+                "Eventos en Vivo",
+                "Conmebol",
+                "eLibertadores",
+                "Miss Universe",
+                "NBC Telemundo",
+                "Mujeres Latinas",
+                "Red Bull",
+                "Broadcast",
+                "Experience",
+                "3D",
+                "Innovation",
+                "Design System",
+                "Campaign Video",
+                "Immersive Stage Visuals",
+                "Video Gen AI",
+                "Creative Direction",
+                "Graphic Pack",
+                "Animation",
+                "Animacion",
+                "Superclasico",
+                "Animation Cafe",
+                "Disney",
+                "Auldt swim",
+                "Messi Experience",
+                "Primo",
+                "ESPN",
+                "Rovio",
+                "Angry Birds",
+                "Runaholics",
+                "Fan Life",
+                "Spotify",
+                "Nike",
+                "Dot Dot Dash",
+                "lollapalooza",
+                "JP Morgan",
+                "Monks",
+                "Primo Entertainment"
+              ],
+              "thumb": "live-events.webp"
+            },
+            {
+              "name": "Photo Retouch",
+              "url": "https://mooco.studio/PhotoRetouch/",
+              "editableUrl": "https://docs.google.com/presentation/d/10Gh-9NDGCJOUcuevR3ewm3U3qgOBR8iMmHjpxAANUzQ/edit?usp=drive_link",
+              "description": "Servicio de retoque fotográfico.",
+              "tags": [
+                "Photo Retouch",
+                "Retoque Fotografico",
+                "Sony",
+                "Claro",
+                "Amazon Prime",
+                "Spotify",
+                "Disney+",
+                "Star+",
+                "Key Visual",
+                "Adaptations",
+                "OOH",
+                "Digital Campaigns",
+                "SONY",
+                "Key Visual",
+                "Platform Assets",
+                "Character Art",
+                "Beplaying",
+                "Proposed"
+              ],
+              "thumb": "photo-retouch.webp"
+            },
+            {
+              "name": "Sports",
+              "url": "https://mooco.studio/Capabilities_Deck_Sports/",
+              "editableUrl": "https://docs.google.com/presentation/d/1yRmbVw6fIGpw_TxNzDunDUFpbQ9lTh4A1dbBUsXeDrs/edit?slide=id.g3f56ff9103e_0_101",
+              "description": "Capability deck enfocado en la vertical deportiva.",
+              "tags": [
+                "Sports",
+                "Deportes",
+                "Olympics",
+                "OBS",
+                "Conmebol",
+                "eLibertadores",
+                "ViX",
+                "UEFA",
+                "Euro 2024",
+                "Animation",
+                "Animacion",
+                "Experience",
+                "TV Spot",
+                "Innovation",
+                "Design System",
+                "Campaign Video",
+                "Motion Graphics",
+                "Illustration",
+                "Ilustracion",
+                "Art Direction",
+                "Digital Content",
+                "Nike",
+                "Dot Dot Dash",
+                "Unitel",
+                "Qatar 2022",
+                "Mundial",
+                "Messi Experience",
+                "Primo Entertainment",
+                "Wings For Life",
+                "Red Bull",
+                "World baseball classic",
+                "ESPN",
+                "Messi Cup",
+                "Runaholics",
+                "Tennis Match",
+                "Telemundo Deportes",
+                "Case Study",
+                "Paramount+",
+                "P+",
+                "DVR",
+                "Design Visions Report"
+              ],
+              "thumb": "sports.webp"
+            },
+            {
+              "name": "Music",
+              "url": "https://mooco.studio/Music",
+              "editableUrl": "https://docs.google.com/presentation/d/1Cu7ib1Hv6AKjhjRz-37TGxGecipttqDJCKL2MdDGa78/edit?usp=drive_link",
+              "tags": [
+                "Music",
+                "Musica",
+                "Sony Music",
+                "Santi Celli",
+                "La Play",
+                "3D",
+                "Clean up",
+                "tracking",
+                "Lali",
+                "Lyrics Videos",
+                "Design",
+                "Animation",
+                "Pos",
+                "VFX",
+                "Cerati VR Experience",
+                "Concept Art",
+                "Creative Art Direction",
+                "Corazon de Neon",
+                "La Berisso",
+                "icons",
+                "post-production",
+                "Chingui Chingui - Soledad ft. Los Auténticos Decadentes",
+                "Mi primer escenario",
+                "Spotify",
+                "Integral graphic",
+                "event design",
+                "applications",
+                "Entertainment",
+                "La Berisso",
+                "Soledad",
+                "Los Autenticos Decadentes",
+                "Spotify",
+                "Mi Primer Escenario",
+                "Quilmes Rock",
+                "Esto Es Cumbia",
+                "Fan Life",
+                "Duki",
+                "Tini",
+                "Red Bull",
+                "Radiografias",
+                "Tutoriales",
+                "Multisilabicas",
+                "Disney",
+                "Bia",
+                "Nickelodeon",
+                "Kallys Mashup",
+                "Lollapalooza",
+                "DF-Blink",
+                "MTV",
+                "Katsomo",
+                "Pollen",
+                "Branding",
+                "VFX",
+                "3D",
+                "Animation",
+                "Animacion",
+                "Illustration",
+                "Ilustracion",
+                "Character Design"
+              ],
+              "thumb": "music.webp"
+            },
+            {
+              "name": "Corporate Solutions",
+              "url": "https://mooco.studio/Corporate_Solutions",
+              "editableUrl": "https://docs.google.com/presentation/d/1gHZRybkMt9hNksQo3SsCdkR8bpVYiBprwTUbB_K3GZk/edit?usp=sharing",
+              "tags": [
+                "Corporate Solutions",
+                "Internal Comms",
+                "Comunicacion Interna",
+                "Disney",
+                "PepsiCo",
+                "Disney+",
+                "Paramount+",
+                "NBC Universal",
+                "Foton Ventures",
+                "Viacom CBS",
+                "Pluto TV",
+                "Conmebol",
+                "eLibertadores",
+                "Media Pro",
+                "Explainer Videos",
+                "Decks",
+                "Reels",
+                "Promotional Items",
+                "Live Events",
+                "Screen Display",
+                "Graphic Design",
+                "Diseno Grafico",
+                "Motion Graphics",
+                "Video Editing"
+              ],
+              "thumb": "corporate-solutions.webp"
+            },
+            {
+              "name": "Titles",
+              "url": "https://mooco.studio/Showtitles",
+              "editableUrl": "https://docs.google.com/presentation/d/1IBeWa9PfEdkxfCMyLyfbqOLZDfe-iEHt9fKfjYvR7pc/edit?usp=drive_link",
+              "tags": [
+                "Titles",
+                "Show Openings",
+                "Aperturas de Programa",
+                "Mujeres Asesinas",
+                "ViX",
+                "La Musica Esta Servida",
+                "Bourke",
+                "Disney+",
+                "Mi Vida",
+                "JK",
+                "Canela TV",
+                "Billboard",
+                "Mujeres Latinas",
+                "NBC Universal",
+                "Telemundo",
+                "Golden Globes",
+                "TNT",
+                "La Jefa",
+                "GFX Pack",
+                "Motion Graphics",
+                "Animation",
+                "Animacion",
+                "Creative Direction",
+                "Branding"
+              ],
+              "thumb": "titles.webp"
+            },
+            {
+              "name": "Kids and family",
+              "url": "https://mooco.studio/kids",
+              "editableUrl": "https://docs.google.com/presentation/d/1W9ju17PFtpZZq9mYjzm9jCNDxfnwjhbtVlewyr-HBZA/edit?slide=id.g3f8da88c5f9_1_1192",
+              "thumb": "kids-and-family.webp"
+            }
+          ]
+        },
+        {
+          "name": "Brand's Works",
+          "links": [
+            {
+              "name": "Red Bull",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1HuYt4sfvmp22xtjnH6eZPtyy8vA3vAYD1N2QgO8ZIPs/edit?usp=sharing",
+              "thumb": "red-bull.webp",
+              "tags": [
+                "Red Bull",
+                "Batalla",
+                "Wings for Life",
+                "Beats",
+                "Radiografias",
+                "Documentary",
+                "Documental",
+                "Animation",
+                "Animacion",
+                "3D",
+                "Illustration",
+                "Ilustracion",
+                "RallyCross",
+                "Tutoriales",
+                "Key Visual"
+              ]
+            },
+            {
+              "name": "Disney DCP",
+              "url": "https://mooco.studio/Disney_DCP-Capabilities_Deck/",
+              "editableUrl": "https://docs.google.com/presentation/d/1b2Pmd1vxF0l_a6DaqXwzyi-kxjB0d3gaIW-_zd4QxsE/edit?slide=id.g3f5cdba1392_2_0",
+              "thumb": "disney-dcp.webp",
+              "tags": [
+                "Disney",
+                "DCP",
+                "Retail Experience",
+                "Proposal",
+                "Character Animation",
+                "Installation",
+                "Animation",
+                "Animacion",
+                "Illustration",
+                "Ilustracion",
+                "Motion Graphics",
+                "Animation Cafe",
+                "Mickey in real Life",
+                "Encanto",
+                "Disney Product",
+                "Mickey and Friends",
+                "Coco Color Full",
+                "Marvel Chicha",
+                "Valentines",
+                "Style guide",
+                "Peace Out",
+                "Food Rush",
+                "Back to school",
+                "Home",
+                "HAY OTROS PROYECTOS"
+              ]
+            },
+            {
+              "name": "Warner / MOOCO",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1eV978vhveAggybwv3ZqtxIHRRx6poFGp0FNhNMBDZ3U/edit?usp=sharing",
+              "thumb": "warner-mooco.webp",
+              "tags": [
+                "Warner",
+                "Jabon Williams",
+                "Bob Esponja",
+                "HBO max",
+                "Max",
+                "Gremlins",
+                "Adult Swim",
+                "Hero Inside",
+                "Craig of the creek",
+                "Pizza con piña",
+                "Batman Day",
+                "Batwheels",
+                "Garfield",
+                "Kung Fu Panda 4",
+                "Craig of the creek",
+                "Crónicas de Pijamadas",
+                "Best of the year",
+                "Mi villano favorito 4",
+                "La que puede, puede",
+                "Dk x HBOMAX",
+                "The Wild Robot",
+                "Minecraft",
+                "TTGO! Month",
+                "Mini Beats Power Rockers",
+                "La huella del Oro",
+                "Little Kids",
+                "Gumball",
+                "Peppa pig",
+                "Bienvenida Evie",
+                "Kids+",
+                "Animé",
+                "Cómo entrenar a tu dragón",
+                "Es cine, es HBOmax",
+                "Peppa pig S11",
+                "Superclásico",
+                "Un día para creer",
+                "TNT",
+                "Viudas Negras",
+                "Key Art",
+                "Sanamente"
+              ]
+            },
+            {
+              "name": "Sony TV",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1Dj2iVHdeahOHR2iFOVPL7ws3EtmLObEbR-5bhtuC3iI/edit?usp=sharing",
+              "thumb": "sony-tv.webp",
+              "tags": [
+                "Sony",
+                "AXN",
+                "Sizzle Reel",
+                "Ad Sales",
+                "Sony One",
+                "Amazon",
+                "XVOD",
+                "Telecentro",
+                "Animation",
+                "Animacion",
+                "3D"
+              ]
+            }
+          ]
+        },
+        {
+          "groupHeader": "Propuestas para Clientes",
+          "name": "Propuestas Comerciales",
+          "links": [
+            {
+              "name": "Mostaza + MOOCO",
+              "url": "https://mooco.studio/Mostaza_+_MOOCO/",
+              "editableUrl": "https://docs.google.com/presentation/d/1oQgrFE__dodvHYDfXOBCsoRt7xmSvvu6YJczpsQ-HP8/edit?slide=id.g3edf4a69665_0_17",
+              "description": "Propuesta/showcase para la cuenta Mostaza.",
+              "tags": [
+                "Mostaza",
+                "Brandbook",
+                "Rebranding",
+                "Propuesta",
+                "Proposal",
+                "Presupuesto",
+                "Budget",
+                "Quote",
+                "Figma",
+                "AI QA",
+                "Red Bull",
+                "ESPN",
+                "Disney",
+                "Tecweek",
+                "Nike",
+                "MTV",
+                "Paramount+"
+              ],
+              "thumb": "mostaza-mooco.webp"
+            },
+            {
+              "name": "Paramount",
+              "url": "https://mooco.studio/Portfolio/Portfolio-Paramount/",
+              "editableUrl": "https://docs.google.com/presentation/d/1aLhRymE6J4tKPXng9vJh1KgkmUienymMV-f-SUtvwuc/edit?slide=id.g2d7d71636f6_2_0",
+              "description": "Portfolio de trabajo realizado para Paramount.",
+              "tags": [
+                "Paramount",
+                "Paramount+",
+                "MTV",
+                "Nickelodeon",
+                "Comedy Central",
+                "Viacom",
+                "Sizzle Reel",
+                "Localización",
+                "Localization",
+                "Adaptation",
+                "South Park",
+                "iCarly",
+                "Loud House",
+                "Live Events",
+                "Branding",
+                "Campaigns",
+                "Digital",
+                "Paid Media",
+                "Holográfico",
+                "LA Screenings",
+                "Cinecittà"
+              ],
+              "thumb": "paramount.webp"
+            },
+            {
+              "name": "Paramount+ - Figma Pipeline",
+              "url": "https://mooco.studio/paramountplus_figma_pipeline/",
+              "editableUrl": "https://docs.google.com/presentation/d/1-4eT2wp9xUuiuwGpnslcojOLw_vkTjylMoFtZ6DHQqk/edit?slide=id.g3522ac5fe9c_1_785",
+              "description": "Propuesta de pipeline en Figma para Paramount+.",
+              "tags": [
+                "Paramount",
+                "Paramount+",
+                "MTV",
+                "Nickelodeon",
+                "Comedy Central",
+                "Viacom",
+                "Global Sizzle",
+                "Sizzle Mobile",
+                "Vidiots MTV",
+                "South Park",
+                "Dia de los Muertos",
+                "Nick World Cup",
+                "Se busca comediante",
+                "Foro Paramount+ Argentina",
+                "LA Screenings",
+                "Cinecitta",
+                "Holofonico",
+                "Campaigns Partners International",
+                "Halloween Campaign",
+                "Premium Campaign",
+                "Paid Media Prime Day",
+                "MTV EMA Manchester",
+                "iCarly",
+                "Loud House",
+                "Logo Adaptation",
+                "Localizacion",
+                "Localization",
+                "Live Events",
+                "Branding",
+                "Digital",
+                "Paid Media"
+              ],
+              "thumb": "paramount-figma-pipeline.webp"
+            },
+            {
+              "name": "Paramount - Fee 2026",
+              "url": "https://mooco.studio/Paramount-Fee2026",
+              "description": "Propuesta de fee/presupuesto 2026 para Paramount.",
+              "tags": [
+                "Paramount+",
+                "Fee 2026",
+                "Quote",
+                "Presupuesto",
+                "Budget",
+                "Production Plan",
+                "PIAs",
+                "Static",
+                "Video",
+                "Leadership",
+                "Support",
+                "Execution",
+                "Figma",
+                "Tools",
+                "Library",
+                "Wishlist",
+                "PO Status",
+                "Contract",
+                "NET Payment Terms"
+              ],
+              "thumb": "paramount-fee-2026.webp"
+            },
+            {
+              "name": "Paramount+ - Figma & Paid Media Proposal",
+              "url": "https://mooco.studio/ParamountPlus_Figma&PaidMedia_Proposal/",
+              "editableUrl": "https://docs.google.com/presentation/d/1-4eT2wp9xUuiuwGpnslcojOLw_vkTjylMoFtZ6DHQqk/edit?slide=id.g3522ac5fe9c_1_785",
+              "description": "Propuesta de Figma y paid media para Paramount+.",
+              "tags": [
+                "Paramount+",
+                "Workflow",
+                "Figma",
+                "Optimization",
+                "Optimizacion",
+                "Partnership",
+                "Eficiencia",
+                "Efficient",
+                "Figma Pipeline",
+                "Paid Media",
+                "Asset Production",
+                "Figma",
+                "Airtable",
+                "MediaSilo",
+                "AI",
+                "IA",
+                "Comfy UI",
+                "Photopea",
+                "Good Sync",
+                "Templates",
+                "Plugins",
+                "Quality Control"
+              ],
+              "thumb": "paramount-figma-paid-media-proposal.webp"
+            },
+            {
+              "name": "The Card Cellar",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1wTiqA5P1ezH_OlOUmsuvdeDKnK2VcN15nKv2MzGkQoY/edit?slide=id.g359e4ead645_0_0",
+              "thumb": "the-card-cellar.webp",
+              "tags": [
+                "The Card Cellar",
+                "Budget Proposal",
+                "Presupuesto",
+                "Presentacion Corporativa",
+                "Budget",
+                "Quote",
+                "Template"
+              ]
+            },
+            {
+              "name": "Spotify",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1hFC6gYcHaurVbwTVLTz9bzQEqntJ73-NLj5vUGt2SPo/edit?slide=id.g359e4ead645_0_176",
+              "thumb": "spotify.webp",
+              "tags": [
+                "Spotify",
+                "Live Session",
+                "Casa Spotify",
+                "Re-branding",
+                "Budget",
+                "Presupuesto",
+                "Logo",
+                "Brand Guideline",
+                "Quote"
+              ]
+            },
+            {
+              "name": "Warner",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1IIGxA-i2TQhrfQQJVDrqrIN1E3vB_lAhVEPv-codWCo/edit?slide=id.g359e4ead645_0_0",
+              "thumb": "warner.webp",
+              "tags": [
+                "Warner Bros",
+                "WBD",
+                "Storyboard",
+                "Presentacion Corporativa",
+                "Budget",
+                "Presupuesto",
+                "Quote",
+                "Template"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Propuestas Creativas",
+          "links": [
+            {
+              "name": "AB2 — Commit To The Bitt, Ideas & Proposal",
+              "url": "https://mooco.studio/AB2_CommitToTheBitt_Ideas&Proposal",
+              "description": "Propuesta de ideas para la cuenta AB2.",
+              "tags": [
+                "Rovio",
+                "Angry Birds 2",
+                "AB2",
+                "Commit to the Bit",
+                "Meme Marketing",
+                "Ideas & Proposal",
+                "Unhinged Mascot",
+                "Creative Direction",
+                "Animation",
+                "Animación",
+                "Brand Applications",
+                "Gaming",
+                "Games"
+              ],
+              "thumb": "ab2-commit-to-the-bitt-ideas-proposal.webp"
+            },
+            {
+              "name": "Rovio Showcase by MOOCO 2026",
+              "url": "https://mooco.studio/Rovio_Showcase_by_MOOCO_2026/",
+              "editableUrl": "https://docs.google.com/presentation/d/1PzemkFCFVBtRH_FIOpttC45TU-HXozqk_OslTJacIaM/edit",
+              "description": "Showcase de trabajo realizado para Rovio.",
+              "tags": [
+                "Rovio",
+                "Angry Birds 2",
+                "AB2",
+                "Showcase",
+                "Sonic Rumble",
+                "Journey",
+                "Supernatural City",
+                "Bounce",
+                "Dream Blast",
+                "Heardhead Squad",
+                "Small Town Murders",
+                "AI Development",
+                "Sega",
+                "Angry Birds",
+                "AB2",
+                "Sonic & Shadow",
+                "Times Square",
+                "Billboards",
+                "OOH",
+                "UA Creatives",
+                "Trailers",
+                "R&D",
+                "AI",
+                "IA",
+                "Almond Board",
+                "Innovationarium",
+                "USDC",
+                "Blink",
+                "Miss Universe",
+                "Telemundo",
+                "Mochis Alpina",
+                "NBC Universal",
+                "MODI",
+                "MODO"
+              ],
+              "thumb": "rovio-showcase-by-mooco-2026.webp"
+            },
+            {
+              "name": "EA Battlefield - Technical + Previous Work",
+              "url": "https://mooco.studio/EA_Battlefield_Technical+PreviousWork/",
+              "editableUrl": "https://docs.google.com/presentation/d/15XmhG4beYUf2q7f5ZI_FZ04Fz3i-RJCaxfLHoc8aV3M/edit?slide=id.g3a2acf1b1c9_6_0",
+              "description": "Propuesta técnica y trabajo previo para EA Battlefield.",
+              "tags": [
+                "EA",
+                "Battlefield",
+                "Plants vs Zombies",
+                "PVZ Replanted",
+                "PVZ3 Evolved",
+                "SimCity BuildIt",
+                "Call of Duty",
+                "Codashop",
+                "Red Bull",
+                "Batalla",
+                "Radiografias",
+                "Multisilabicas",
+                "Angry Birds",
+                "Sonic",
+                "Times Square",
+                "Bugatti Rimac",
+                "TJ Maxx",
+                "Paramount+",
+                "Metacore",
+                "Merge Mansion",
+                "Rovio",
+                "Dream Blast",
+                "Small Town Murderers",
+                "MTV",
+                "Pollen",
+                "Unreal Engine",
+                "Frostbite",
+                "UA Creatives",
+                "Gaming",
+                "Games"
+              ],
+              "thumb": "ea-battlefield-technical-previous-work.webp"
+            },
+            {
+              "name": "MADBOX Showcase by MOOCO 2026",
+              "url": "https://mooco.studio/MADBOX_SHOWCASE_by_MOOCO_2026/",
+              "editableUrl": "https://docs.google.com/presentation/d/1BRli4n7iQSbo7iD_zKi2doYh9jto1dMhsbVYAd1l7XY/edit?usp=drive_web&ouid=105525288729819420077",
+              "description": "Showcase de trabajo realizado para MADBOX.",
+              "tags": [
+                "MADBOX",
+                "Pocket Champs",
+                "UA Creatives",
+                "Trailers",
+                "Halloween",
+                "Potion Contest",
+                "Yummy",
+                "Sega",
+                "Sonic Rumble",
+                "Fake Gameplay",
+                "R&D",
+                "AI",
+                "IA",
+                "Gaming",
+                "Games"
+              ],
+              "thumb": "madbox-showcase-by-mooco-2026.webp"
+            },
+            {
+              "name": "MOOCO Capabilities Deck - NBCU Telemundo",
+              "url": "https://mooco.studio/MOOCO_capabilities_deck-nbcu-telemundo/",
+              "description": "Capability deck presentado a NBCU Telemundo.",
+              "tags": [
+                "Telemundo",
+                "NBCU",
+                "Capabilities",
+                "Deck",
+                "Workflow",
+                "Case Study",
+                "Paramount+",
+                "IA",
+                "AI",
+                "Mochis",
+                "USDC",
+                "The Messi Experience",
+                "Tecweek",
+                "Branding",
+                "ESPN",
+                "Deportes",
+                "Nike",
+                "Radiografias",
+                "Red Bull",
+                "Angry Birds 2",
+                "Shade Trailer",
+                "Trend Itelligence",
+                "DVR",
+                "Design Vision Report",
+                "Brand System",
+                "NBC Universal",
+                "Telemundo",
+                "NBCU",
+                "Show Openings"
+              ],
+              "thumb": "mooco-capabilities-deck-nbcu-telemundo.webp"
+            },
+            {
+              "name": "IA + MOOCO - 2026 BOU",
+              "url": "https://mooco.studio/IA+MOOCO_2026_BOU/",
+              "description": "Propuesta de IA para 2026 (BOU).",
+              "tags": [
+                "AI",
+                "IA",
+                "BOU",
+                "QDE",
+                "Pet Panic",
+                "MODO",
+                "Modi",
+                "USDC",
+                "Innovatarium",
+                "Pampa Films",
+                "Familia a la Deriva",
+                "Tennis Match",
+                "Telemundo",
+                "Sport",
+                "Booking",
+                "Sequence",
+                "Mochis"
+              ],
+              "thumb": "ia-mooco-2026-bou.webp"
+            },
+            {
+              "name": "Telemundo Korea",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1WMj3J2TlVrdqMGmAj3H0ZtuiliUorw6XumOP3D9lRdw/edit?slide=id.g3cd0aed09e4_4_15",
+              "thumb": "telemundo-korea.webp",
+              "tags": [
+                "Korea",
+                "Propuesta",
+                "Telemundo",
+                "Deportes",
+                "Sport",
+                "Estetica",
+                "Mundial",
+                "World Cup",
+                "K-Pop",
+                "K-Drama",
+                "A la Conquista del Mundo",
+                "Propuesta Estetica",
+                "Branding",
+                "Diseño Grafico",
+                "Graphic Design"
+              ]
+            },
+            {
+              "name": "Grupo Faro Verde",
+              "url": "",
+              "editableUrl": "https://docs.google.com/presentation/d/1ZOYWACLLw3cCuAR2aTlRSjBTRqcu001iI2fLtbFTuFc/edit?slide=id.g3a0ae0ae408_2_33",
+              "thumb": "grupo-faro-verde.webp",
+              "tags": [
+                "Grupo Faro Verde",
+                "Edit",
+                "Motion Graphics",
+                "Google Ads",
+                "Columbia",
+                "Dot Dot Dash",
+                "Red Bull",
+                "Radiografias",
+                "Microsoft 365",
+                "Grey",
+                "Coway Dreams",
+                "Tasty Treat",
+                "Singing Buses",
+                "Portfolio"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Reels",
+          "links": [
+            {
+              "name": "MOOCO REEL",
+              "url": "https://mooco.studio/Reel",
+              "editableUrl": "https://drive.google.com/file/d/1b_uuifOJ2lP2NT1o5lGXnuZuHohKqSJv/view?usp=drive_link",
+              "tags": [
+                "REEL",
+                "Studio",
+                "General",
+                "2026",
+                "2025"
+              ],
+              "thumb": "mooco-reel.webp"
+            },
+            {
+              "name": "IA REEL",
+              "url": "https://shots.re/1d30f5",
+              "editableUrl": "https://drive.google.com/file/d/1hg3iuL1jIiPL-8-JofdZrANJo6FAbQdc/view",
+              "tags": [
+                "REEL",
+                "AI",
+                "MOOCO",
+                "IA",
+                "2026",
+                "2025"
+              ],
+              "thumb": "ia-reel.webp"
+            },
+            {
+              "name": "MOOCO GAMES REEL",
+              "url": "https://mooco.studio/reel/Games",
+              "editableUrl": "https://drive.google.com/file/d/1S4mU_3Ey2k_s10LOqG74Q1tKDi8A28bl/view?usp=drive_link",
+              "tags": [
+                "REEL",
+                "Games",
+                "Gaming",
+                "2026",
+                "2025"
+              ],
+              "thumb": "mooco-games-reel.webp"
+            },
+            {
+              "name": "VFX REEL",
+              "url": "https://mooco.studio/reels/VFX/",
+              "editableUrl": "https://drive.google.com/file/d/1oioVl9NeGMwoigpJh8xthQDbb0eRfFNg/view",
+              "tags": [
+                "REEL",
+                "Studio",
+                "VFX",
+                "2026",
+                "2025"
+              ],
+              "thumb": "vfx-reel.webp"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+</script>
+
+<header class="site-header">
+  <div class="header-row">
+    <div class="brand" aria-label="MOOCO">
+      <svg viewBox="0 0 5442.52 3061.42" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+        <path d="M1475.38,1887.32h-128.48v-617.11h-20.23l-124.43,617.11h-214.47l-130.5-617.11h-20.24v617.11h-128.48v-722.32h255.95l119.37,617.11h20.23l116.34-617.11h254.93v722.32Z"/>
+        <path d="M1940.76,1905.53c-224.59,0-374.31-150.74-374.31-376.34s149.72-373.3,374.31-373.3,373.3,149.72,373.3,373.3-149.72,376.34-373.3,376.34ZM1940.76,1784.13c146.69,0,244.82-102.18,244.82-254.94s-98.13-251.9-244.82-251.9-245.83,101.16-245.83,251.9,98.13,254.94,245.83,254.94Z"/>
+        <path d="M2769.31,1905.53c-224.59,0-374.31-150.74-374.31-376.34s149.72-373.3,374.31-373.3,373.3,149.72,373.3,373.3-149.72,376.34-373.3,376.34ZM2769.31,1784.13c146.69,0,244.82-102.18,244.82-254.94s-98.13-251.9-244.82-251.9-245.83,101.16-245.83,251.9,98.13,254.94,245.83,254.94Z"/>
+        <path d="M3571.56,1784.13c107.23,0,189.18-58.68,205.36-146.69h128.48c-28.33,160.85-161.87,268.09-333.85,268.09-208.4,0-348.01-151.75-348.01-378.36s139.61-371.27,348.01-371.27c175.01,0,308.55,102.18,333.85,254.93h-128.48c-15.18-79.92-97.12-133.54-205.36-133.54-131.51,0-219.53,100.15-219.53,249.87s88.01,256.96,219.53,256.96Z"/>
+        <path d="M4360.67,1905.53c-224.59,0-374.31-150.74-374.31-376.34s149.72-373.3,374.31-373.3,373.3,149.72,373.3,373.3-149.72,376.34-373.3,376.34ZM4360.67,1784.13c146.69,0,244.82-102.18,244.82-254.94s-98.13-251.9-244.82-251.9-245.83,101.16-245.83,251.9,98.13,254.94,245.83,254.94Z"/>
+      </svg>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="header-meta" id="header-meta"></div>
+    <div class="save-state" id="save-state">
+      <span class="save-dot" id="save-dot"></span>
+      <span id="save-label"></span>
+    </div>
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" class="search" id="search" placeholder="Buscar deck…" autocomplete="off">
+    </div>
+    <button class="add-btn" id="add-btn">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Add Link
+    </button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="categories-section" id="cat-section">
+    <div class="cat-grid" id="cat-grid"></div>
+  </section>
+
+  <section class="decks-section" id="decks-section">
+    <div class="decks-header" id="decks-header"></div>
+    <div class="decks-grid" id="decks-grid"></div>
+  </section>
+</main>
+
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+
+<script>
+(() => {
+  const raw = document.getElementById('links-data').textContent;
+  const state = JSON.parse(raw);
+  const evergreen = state.sheets.evergreen;
+
+  let selectedCat = evergreen.categories[0]?.name || null;
+  let searchTerm = '';
+
+  const $catGrid = document.getElementById('cat-grid');
+  const $decksHeader = document.getElementById('decks-header');
+  const $decksGrid = document.getElementById('decks-grid');
+  const $catSection = document.getElementById('cat-section');
+  const $heroTitle = document.getElementById('hero-title');
+  const $heroEyebrow = document.getElementById('hero-eyebrow');
+  const $search = document.getElementById('search');
+  const $addBtn = document.getElementById('add-btn');
+  const $modalRoot = document.getElementById('modal-root');
+  const $toastRoot = document.getElementById('toast-root');
+  const $headerMeta = document.getElementById('header-meta');
+  const $saveState = document.getElementById('save-state');
+  const $saveDot = document.getElementById('save-dot');
+  const $saveLabel = document.getElementById('save-label');
+
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function splitUrls(url) {
+    if (!url) return [];
+    const parts = url.split(/\s+-\s+/);
+    if (parts.length > 1 && parts.every(p => /^(https?:\/\/|\/|-$)/.test(p.trim()))) {
+      return parts.map(p => p.trim()).filter(Boolean);
+    }
+    return [url];
+  }
+
+  // Deterministic placeholder gradient per name
+  const THUMB_GRADIENTS = [
+    ['#1c1c1b', '#2a2a28'],
+    ['#1a2028', '#0d1218'],
+    ['#28221c', '#181410'],
+    ['#1e2820', '#111a13'],
+    ['#241c26', '#141018'],
+    ['#292620', '#181614'],
+    ['#1a2528', '#0f181a'],
+    ['#28201a', '#181310'],
+  ];
+  function thumbFor(name) {
+    let h = 0;
+    for (let i = 0; i < name.length; i++) h = ((h << 5) - h) + name.charCodeAt(i);
+    const idx = Math.abs(h) % THUMB_GRADIENTS.length;
+    return THUMB_GRADIENTS[idx];
+  }
+  function firstLetter(name) {
+    const m = name.match(/[A-Za-zÁÉÍÓÚÜÑ]/);
+    return m ? m[0].toUpperCase() : '◆';
+  }
+  function slugFor(name) {
+    return String(name).toLowerCase().trim()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[-\s]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60);
+  }
+
+  function totalLinks() {
+    return evergreen.categories.reduce((n, c) => n + c.links.length, 0);
+  }
+
+  function renderHeaderMeta() {
+    const t = totalLinks();
+    $headerMeta.innerHTML = `<strong>${t}</strong> decks · <strong>${evergreen.categories.length}</strong> categorías`;
+  }
+
+  function renderCategoryCards() {
+    $catGrid.innerHTML = evergreen.categories.map(c => {
+      const isSel = c.name === selectedCat && !searchTerm.trim();
+      const groupHtml = c.groupHeader ? `<div class="cat-group-label">${esc(c.groupHeader)}</div>` : `<div class="cat-group-label"></div>`;
+      return `<button class="cat-card${isSel ? ' is-selected' : ''}" data-cat="${esc(c.name)}" type="button">
+        <div class="cat-card-top">
+          ${groupHtml}
+          <span class="cat-count-pill">${c.links.length} ${c.links.length === 1 ? 'deck' : 'decks'}</span>
+        </div>
+        <div class="cat-name">${esc(c.name)}</div>
+      </button>`;
+    }).join('');
+    $catGrid.querySelectorAll('.cat-card').forEach(card => {
+      card.addEventListener('click', () => {
+        selectedCat = card.dataset.cat;
+        searchTerm = '';
+        $search.value = '';
+        renderAll();
+        const y = document.getElementById('decks-section').getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      });
+    });
+  }
+
+  function renderDeckCards() {
+    const q = searchTerm.trim().toLowerCase();
+    let decksToShow = [];
+    let headerLabel = '';
+    let headerCount = '';
+
+    if (q) {
+      // Whole-word match for tags (so "IA" doesn't match "Radiografias"),
+      // substring match for name/description/URL (so "Para" still finds "Paramount").
+      const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const tagRe = new RegExp('\\b' + escRe(q) + '\\b', 'i');
+      evergreen.categories.forEach((c, catIdx) => {
+        c.links.forEach((l, linkIdx) => {
+          const matches =
+            (l.name || '').toLowerCase().includes(q) ||
+            (l.url || '').toLowerCase().includes(q) ||
+            (l.editableUrl || '').toLowerCase().includes(q) ||
+            (l.description || '').toLowerCase().includes(q) ||
+            (l.tags || []).some(t => tagRe.test(t));
+          if (matches) {
+            decksToShow.push({ link: l, catIdx, linkIdx, catName: c.name });
+          }
+        });
+      });
+      headerLabel = `Resultados`;
+      headerCount = `${decksToShow.length} ${decksToShow.length === 1 ? 'match' : 'matches'} · "${searchTerm}"`;
+    } else {
+      const catIdx = evergreen.categories.findIndex(c => c.name === selectedCat);
+      if (catIdx >= 0) {
+        evergreen.categories[catIdx].links.forEach((l, linkIdx) => {
+          decksToShow.push({ link: l, catIdx, linkIdx, catName: selectedCat });
+        });
+      }
+      headerLabel = selectedCat || 'Sin categoría seleccionada';
+      headerCount = `${decksToShow.length} ${decksToShow.length === 1 ? 'deck' : 'decks'}`;
+    }
+
+    $decksHeader.innerHTML = `<h2 class="decks-title">${esc(headerLabel)}</h2><span class="decks-subtitle">${esc(headerCount)}</span>`;
+
+    if (!decksToShow.length) {
+      $decksGrid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1">Sin resultados${q ? ' para "' + esc(searchTerm) + '"' : ''}</div>`;
+      return;
+    }
+
+    $decksGrid.innerHTML = decksToShow.map(({ link, catIdx, linkIdx, catName }) => {
+      const urls = splitUrls(link.url);
+      const primaryUrl = urls[0] || link.url;
+      const isValidUrl = primaryUrl && primaryUrl !== '-' && /^https?:\/\//.test(primaryUrl);
+      const editableUrl = link.editableUrl || '';
+      const hasEditable = !!editableUrl;
+      const [g1, g2] = thumbFor(link.name);
+      const letter = firstLetter(link.name);
+
+      const visitBtn = isValidUrl
+        ? `<a class="bubble bubble-primary" href="${esc(primaryUrl)}" target="_blank" rel="noopener noreferrer">Visit <span aria-hidden="true">↗</span></a>`
+        : `<button class="bubble" data-action="add-url" type="button">Visit <span aria-hidden="true">↗</span></button>`;
+      const editableBtn = hasEditable
+        ? `<a class="bubble" href="${esc(editableUrl)}" target="_blank" rel="noopener noreferrer">Editable <span aria-hidden="true">↗</span></a>`
+        : `<span class="bubble bubble-empty" aria-disabled="true" title="Sin link editable cargado">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            Editable
+          </span>`;
+
+      const desc = link.description
+        ? `<p class="deck-desc">${esc(link.description)}</p>`
+        : `<p class="deck-desc empty">Sin descripción todavía.</p>`;
+
+      const thumbImg = link.thumb
+        ? `<img class="deck-thumb-img" src="thumbs/${esc(link.thumb)}" alt="" loading="lazy" onerror="this.remove()">`
+        : '';
+      return `<article class="deck-card" data-cat-idx="${catIdx}" data-link-idx="${linkIdx}">
+        <div class="deck-thumb" style="background: linear-gradient(135deg, ${g1}, ${g2})">
+          <span class="deck-thumb-brand">MOOCO</span>
+          <span class="deck-thumb-letter">${esc(letter)}</span>
+          ${thumbImg}
+        </div>
+        <div class="deck-body">
+          <div class="deck-eyebrow">
+            <span>${esc(catName)}</span>
+          </div>
+          <h3 class="deck-title">${esc(link.name)}</h3>
+          ${desc}
+          <div class="deck-actions">
+            ${visitBtn}
+            ${editableBtn}
+            <div class="deck-icon-actions">
+              <button class="icon-bubble" data-action="edit" type="button" aria-label="Editar">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </button>
+              <button class="icon-bubble danger" data-action="delete" type="button" aria-label="Eliminar">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>`;
+    }).join('');
+
+    $decksGrid.querySelectorAll('.deck-card').forEach(card => {
+      const catIdx = +card.dataset.catIdx;
+      const linkIdx = +card.dataset.linkIdx;
+      const openEdit = () => openEditor({ catIdx, linkIdx });
+      const addUrlBtn = card.querySelector('[data-action="add-url"]');
+      if (addUrlBtn) addUrlBtn.addEventListener('click', openEdit);
+      card.querySelector('[data-action="edit"]').addEventListener('click', openEdit);
+      card.querySelector('[data-action="delete"]').addEventListener('click', () => {
+        const link = evergreen.categories[catIdx].links[linkIdx];
+        if (!confirm(`¿Eliminar "${link.name}"?`)) return;
+        evergreen.categories[catIdx].links.splice(linkIdx, 1);
+        renderAll();
+        save();
+      });
+    });
+  }
+
+  function renderAll() {
+    renderHeaderMeta();
+    renderCategoryCards();
+    renderDeckCards();
+  }
+
+  // ---- Modal ----
+  function openEditor(ctx) {
+    const isNew = ctx.linkIdx == null;
+    const link = !isNew
+      ? evergreen.categories[ctx.catIdx].links[ctx.linkIdx]
+      : { name: '', url: '', editableUrl: '', description: '', tags: [] };
+    const existingCat = !isNew ? evergreen.categories[ctx.catIdx].name : selectedCat;
+
+    const catOptions = evergreen.categories
+      .map(c => `<option value="${esc(c.name)}"${c.name === existingCat ? ' selected' : ''}>${esc(c.name)}</option>`)
+      .concat(`<option value="__new__">+ Nueva categoría…</option>`)
+      .join('');
+
+    const tagsValue = Array.isArray(link.tags) ? link.tags.join(', ') : '';
+
+    $modalRoot.innerHTML = `
+      <div class="modal-backdrop" id="mb">
+        <div class="modal" role="dialog" aria-modal="true">
+          <div class="modal-head">
+            <h3 class="modal-title">${isNew ? 'Nuevo deck' : 'Editar deck'}</h3>
+            <button class="modal-close" id="modal-close" aria-label="Cerrar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <form class="modal-body" id="link-form">
+            <div class="field">
+              <label for="f-name">Nombre</label>
+              <input id="f-name" name="name" required value="${esc(link.name)}" placeholder="Ej: Craft Portafolio">
+            </div>
+            <div class="field">
+              <label for="f-url">Visit URL</label>
+              <input id="f-url" name="url" value="${esc(link.url || '')}" placeholder="https://mooco.studio/...">
+            </div>
+            <div class="field">
+              <label for="f-editable">Editable URL (opcional)</label>
+              <input id="f-editable" name="editableUrl" value="${esc(link.editableUrl || '')}" placeholder="https://docs.google.com/...">
+              <div class="field-hint">Link a la versión editable (Google Slides, PPT, Figma, etc.)</div>
+            </div>
+            <div class="field">
+              <label for="f-desc">Descripción (opcional)</label>
+              <textarea id="f-desc" name="description" placeholder="Breve descripción del deck">${esc(link.description || '')}</textarea>
+            </div>
+            <div class="field">
+              <label for="f-tags">Tags (opcional)</label>
+              <input id="f-tags" name="tags" value="${esc(tagsValue)}" placeholder="Portfolio, Craft, 3D">
+              <div class="field-hint">Separados por comas. Se usan para el buscador.</div>
+            </div>
+            <div class="field">
+              <label for="f-cat">Categoría</label>
+              <div class="cat-picker">
+                <select id="f-cat" name="cat">${catOptions}</select>
+                <input id="f-cat-new" name="catNew" placeholder="Nombre de nueva categoría" hidden>
+              </div>
+            </div>
+          </form>
+          <div class="modal-foot">
+            <div>${!isNew ? `<button class="btn-danger" id="modal-delete" type="button">Eliminar</button>` : ''}</div>
+            <div class="right">
+              <button class="btn-ghost" id="modal-cancel" type="button">Cancelar</button>
+              <button class="btn-primary" id="modal-save" type="submit" form="link-form">Guardar</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+    const close = () => { $modalRoot.innerHTML = ''; document.removeEventListener('keydown', onKey); };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    document.getElementById('mb').addEventListener('click', (e) => { if (e.target.id === 'mb') close(); });
+    document.getElementById('modal-close').addEventListener('click', close);
+    document.getElementById('modal-cancel').addEventListener('click', close);
+
+    const $catSel = document.getElementById('f-cat');
+    const $catNew = document.getElementById('f-cat-new');
+    function handleCat() {
+      if ($catSel.value === '__new__') {
+        $catNew.hidden = false; $catNew.required = true; $catNew.focus();
+      } else {
+        $catNew.hidden = true; $catNew.required = false;
+      }
+    }
+    $catSel.addEventListener('change', handleCat);
+
+    if (!isNew) {
+      document.getElementById('modal-delete').addEventListener('click', () => {
+        if (!confirm(`¿Eliminar "${link.name}"?`)) return;
+        evergreen.categories[ctx.catIdx].links.splice(ctx.linkIdx, 1);
+        close(); renderAll(); save();
+      });
+    }
+
+    document.getElementById('link-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      const catValue = f.cat.value === '__new__' ? (f.catNew.value || '').trim() : f.cat.value;
+      if (!catValue) return;
+      const newLink = { name: f.name.value.trim(), url: f.url.value.trim() };
+      if (f.editableUrl.value.trim()) newLink.editableUrl = f.editableUrl.value.trim();
+      if (f.description.value.trim()) newLink.description = f.description.value.trim();
+      const tagsList = f.tags.value.split(',').map(t => t.trim()).filter(Boolean);
+      if (tagsList.length) newLink.tags = tagsList;
+
+      if (!isNew) {
+        evergreen.categories[ctx.catIdx].links.splice(ctx.linkIdx, 1);
+        if (evergreen.categories[ctx.catIdx].links.length === 0) {
+          evergreen.categories.splice(ctx.catIdx, 1);
+        }
+      }
+      let cat = evergreen.categories.find(c => c.name === catValue);
+      if (!cat) {
+        cat = { name: catValue, links: [] };
+        evergreen.categories.push(cat);
+      }
+      cat.links.push(newLink);
+      selectedCat = catValue;
+      close(); renderAll(); save();
+    });
+
+    setTimeout(() => document.getElementById('f-name').focus(), 40);
+  }
+
+  // ---- Toast + copy ----
+  let toastTimer;
+  function toast(msg, isError = false) {
+    $toastRoot.innerHTML = `<div class="toast${isError ? ' error' : ''}">${esc(msg)}</div>`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { $toastRoot.innerHTML = ''; }, 1800);
+  }
+
+  // ---- Persistence ----
+  let saveTimer = null;
+  let claudeArtifact = null;
+  let artifactAsked = false;
+  async function getArtifact() {
+    if (artifactAsked) return claudeArtifact;
+    artifactAsked = true;
+    try {
+      if (window.claude && typeof window.claude.use === 'function') {
+        claudeArtifact = await window.claude.use('artifact');
+      }
+    } catch (e) { claudeArtifact = null; }
+    return claudeArtifact;
+  }
+  function setSaveState(mode, label) {
+    if (label) {
+      $saveState.classList.add('visible');
+      $saveDot.className = 'save-dot' + (mode ? ' ' + mode : '');
+      $saveLabel.textContent = label;
+      if (mode === 'saved') setTimeout(() => $saveState.classList.remove('visible'), 2000);
+    } else {
+      $saveState.classList.remove('visible');
+    }
+  }
+  function save() {
+    clearTimeout(saveTimer);
+    setSaveState('saving', 'Guardando');
+    saveTimer = setTimeout(doSave, 600);
+  }
+  async function doSave() {
+    try {
+      try { localStorage.setItem('mooco-links', JSON.stringify(state)); } catch (e) {}
+      const art = await getArtifact();
+      if (!art) { setSaveState('saved', 'Guardado local'); return; }
+      const res = await fetch(location.href, { cache: 'no-store' });
+      const src = await res.text();
+      const newJson = JSON.stringify(state, null, 2).replace(/<\/script/gi, '<\\/script');
+      const marker = /<script id="links-data" type="application\/json">[\s\S]*?<\/script>/;
+      if (!marker.test(src)) throw new Error('data block not found');
+      const scriptOpen = '<script id="links-data" type="application/json">';
+      const scriptClose = '<' + '/script>';
+      const newSrc = src.replace(marker, scriptOpen + '\n' + newJson + '\n' + scriptClose);
+      await art.publish(newSrc);
+      setSaveState('saved', 'Guardado');
+    } catch (err) {
+      if (err && err.code === 'conflict') return;
+      if (err && (err.code === 'not_writer' || err.code === 'not_granted' || err.code === 'not_declared')) {
+        setSaveState('error', 'Solo lectura'); return;
+      }
+      console.error('Save failed', err);
+      setSaveState('error', 'Error');
+      toast('Error al guardar', true);
+    }
+  }
+
+  // ---- Wire ----
+  $search.addEventListener('input', (e) => {
+    searchTerm = e.target.value;
+    renderCategoryCards();
+    renderDeckCards();
+  });
+  $addBtn.addEventListener('click', () => openEditor({ catIdx: null, linkIdx: null }));
+
+  renderAll();
+})();
+</script>

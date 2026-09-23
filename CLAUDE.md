@@ -33,6 +33,8 @@ The index and the `/<slug>` pages are built from it.
   `[slug]/`, `new/`)
 - `lib/` — data access plus pure helpers; the only place that talks to the database
 - `docs/` — team workflow docs and the [backlog](docs/backlog/README.md)
+- `reference/` — third-party implementations kept for reference only; excluded from
+  ESLint and Tailwind, never imported or deployed
 - Config at root: `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`,
   `postcss.config.mjs`
 
