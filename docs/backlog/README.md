@@ -13,3 +13,14 @@ New entries land here only after asking the user (see the corresponding rule in 
 - [Install the release tooling the workflow doc assumes](infra-release-tooling.md) — `yarn release` is documented but the script does not exist.
 - [Adapt the commit workflow examples to this project](docs-adapt-commits-workflow-examples.md) — the breaking-change examples describe a different repo.
 - [Set up a test runner](infra-testing-setup.md) — nothing is tested; slug generation is the first thing that should be.
+
+### Port of the reference index
+
+Ordered by dependency; the migration comes last.
+
+- [Categories and groups](feature-categories-and-groups.md) — the reference is organised in groups and categories; this app only has flat tags.
+- [Entries that are not Google Slides decks](data-non-slides-entries.md) — reels and external links do not fit a model that requires a published id.
+- [Upload a thumbnail for each presentation](feature-thumbnail-upload.md) — image upload in `/new`, stored in Supabase Storage.
+- [Whole-word matching for tags in search](feature-search-whole-word-tags.md) — so `IA` stops matching "Radiografias".
+- [Port the reference index UI](feature-port-reference-index-ui.md) — category grid and deck cards with thumbnails.
+- [Migrate the reference index into the database](data-migrate-reference-index.md) — URLs to Slides ids; published ids are not in the data and must be recovered.
