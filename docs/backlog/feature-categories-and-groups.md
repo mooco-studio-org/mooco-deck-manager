@@ -17,13 +17,15 @@ needs somewhere to put each entry's category.
 
 ## Notes
 
+- Decided: categories are their own table, already in the schema
+  (`supabase/migrations/20260923120000_create_entries_and_categories.sql`) — `id`,
+  unique `name`, a `group_name` label and a `position` for the fixed order the reference
+  shows. Entries point to it through a nullable `category_id`; what is left is the code
+  (`lib/`, form, index).
 - In the reference, a category has no id and is matched by name, and a group is just a
-  `groupHeader` string on the first category of the group (`ARCHITECTURE.md` §10). Here a
-  category needs a stable id or slug so renaming it does not orphan its presentations.
-- Decide whether categories are a real table (ordered, with a group) or just a
-  distinguished tag. Order matters in the reference: the index shows categories in a fixed
-  sequence.
-- Each presentation belongs to exactly one category in the reference.
+  `groupHeader` string on the first category of the group (`ARCHITECTURE.md` §10).
+- Each entry belongs to exactly one category in the reference. `category_id` is nullable
+  only so the schema could land before this feature; decide whether to make it required.
 - The `/new` form in the reference lets you pick an existing category or create one inline
   ("+ Nueva categoría…").
 - UI: a grid of category cards that select what the deck grid shows, with a link count per

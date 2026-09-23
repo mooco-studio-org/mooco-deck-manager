@@ -2,19 +2,24 @@
 
 ## Project
 
-Presentation index for MOOCO, served on a subdomain of the main site. It catalogs the
-studio's slide decks and serves each one from its own URL, so a deck can be sent to a
-client without duplicating a wrapper folder by hand. The slides stay in Google Slides —
-this app never hosts their content, only the frame around it.
+Presentation index for MOOCO, served on a subdomain of the main site. It catalogs two
+kinds of entries:
 
-- `/` — index of all presentations: name, link to the deck's own page, link to the
-  Google Slides editable, and tags for searching and filtering.
-- `/new` — form to register a new presentation in the index.
-- `/<slug>` — full-screen wrapper that plays the deck. This is the link sent to clients.
+- **Decks** — Google Slides presentations, each served from its own URL, so a deck can be
+  sent to a client without duplicating a wrapper folder by hand. The slides stay in
+  Google Slides — this app never hosts their content, only the frame around it.
+- **Assets** — reels, videos and other files hosted elsewhere. They are listed in the
+  index and open at their external URL; they have no page here.
 
-All presentation data lives in a database (Supabase, planned — not yet integrated); until
-it is wired up, `lib/presentations.ts` backs the same interface with an in-memory store.
-The index and the `/<slug>` pages are built from it.
+Routes:
+
+- `/` — index of all entries: name, links, and tags for searching and filtering.
+- `/new` — form to register a deck or an asset.
+- `/<slug>` — full-screen wrapper that plays a deck. This is the link sent to clients.
+
+All entry data lives in a database (Supabase, schema in `supabase/migrations/`, not yet
+wired into the app); until it is, `lib/presentations.ts` backs the same interface with an
+in-memory store. The index and the `/<slug>` pages are built from it.
 
 ## Stack
 
@@ -32,6 +37,7 @@ The index and the `/<slug>` pages are built from it.
 - `app/` — App Router routes (`layout.tsx`, `page.tsx`, `globals.css`, `icon.png`,
   `[slug]/`, `new/`)
 - `lib/` — data access plus pure helpers; the only place that talks to the database
+- `supabase/migrations/` — database schema as SQL migrations, applied in order
 - `docs/` — team workflow docs and the [backlog](docs/backlog/README.md)
 - `reference/` — third-party implementations kept for reference only; excluded from
   ESLint and Tailwind, never imported or deployed
@@ -46,14 +52,13 @@ The index and the `/<slug>` pages are built from it.
 - The slug is a deck's public identity: generated once on creation, never changed, and
   used as the `/<slug>` route param. Only decks have one. The database key is a separate
   generated `id` that every entry has, decks and assets alike; edit and delete address
-  entries by `id`. Until Supabase lands, the in-memory store still keys by slug.
+  entries by `id`.
 - Store Google Slides identifiers, never URLs, and rebuild the URLs from them
   (`lib/google-slides.ts`). A deck has two unrelated ids: the published id (`2PACX-…`,
   valid only on `/pub` and `/pubembed`) and the file id (valid only on `/edit`). Neither
   derives from the other, so both are stored separately.
-- The ids-only rule applies to decks. Assets (reels, files, anything not a Slides deck —
-  [planned](docs/backlog/data-deck-and-asset-entries.md)) are the one exception: they
-  store their external URLs as-is, validated server-side as `https:`.
+- The ids-only rule applies to decks. Assets are the one exception: they store their
+  external URLs as-is, validated server-side as `https:`.
 - No secrets in client code. Supabase keys live in environment variables; anything
   exposed to the browser must be safe to be public.
 
