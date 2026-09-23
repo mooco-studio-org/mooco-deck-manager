@@ -21,7 +21,9 @@ After [categories](feature-categories-and-groups.md) and
 - Sticky header with a `<N> decks · <N> categorías` counter, search input and an add
   button (here, a link to `/new`).
 - Deck card: 16:10 thumbnail, category eyebrow, title, description clamped to 3 lines,
-  and the actions — here "Open" goes to `/<slug>` and "Editable" to the Slides editor.
+  and the actions — for a deck, "Open" goes to `/<slug>` and "Editable" to the Slides
+  editor; for an [asset](data-deck-and-asset-entries.md), "Visit" goes to its external URL
+  and "File" to its file URL. Cards should make the type visible.
 - Empty states matter: "Editable" renders dashed and disabled when there is no file id.
 - Tags stay searchable but are hidden on cards in the reference. Decide whether to keep the
   current tag filter chips.

@@ -19,7 +19,7 @@ New entries land here only after asking the user (see the corresponding rule in 
 Ordered by dependency; the migration comes last.
 
 - [Categories and groups](feature-categories-and-groups.md) — the reference is organised in groups and categories; this app only has flat tags.
-- [Entries that are not Google Slides decks](data-non-slides-entries.md) — reels and external links do not fit a model that requires a published id.
+- [Two entry types: decks and assets](data-deck-and-asset-entries.md) — reels and files get an external Visit URL; decks keep their `/<slug>` wrapper.
 - [Upload a thumbnail for each presentation](feature-thumbnail-upload.md) — image upload in `/new`, stored in Supabase Storage.
 - [Whole-word matching for tags in search](feature-search-whole-word-tags.md) — so `IA` stops matching "Radiografias".
 - [Port the reference index UI](feature-port-reference-index-ui.md) — category grid and deck cards with thumbnails.

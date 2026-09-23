@@ -49,6 +49,9 @@ The index and the `/<slug>` pages are built from it.
   (`lib/google-slides.ts`). A deck has two unrelated ids: the published id (`2PACX-…`,
   valid only on `/pub` and `/pubembed`) and the file id (valid only on `/edit`). Neither
   derives from the other, so both are stored separately.
+- The ids-only rule applies to decks. Assets (reels, files, anything not a Slides deck —
+  [planned](docs/backlog/data-deck-and-asset-entries.md)) are the one exception: they
+  store their external URLs as-is, validated server-side as `https:`.
 - No secrets in client code. Supabase keys live in environment variables; anything
   exposed to the browser must be safe to be public.
 
