@@ -10,10 +10,9 @@ app is an empty shell and the team keeps maintaining two lists.
 
 ## When
 
-After Supabase is integrated and the model decisions this depends on are settled:
-[categories](feature-categories-and-groups.md), [thumbnails](feature-thumbnail-upload.md)
-and [decks and assets](data-deck-and-asset-entries.md). Migrating before then means
-migrating twice.
+After Supabase is integrated into the app and the model decisions this depends on are
+settled: [categories](feature-categories-and-groups.md) and
+[thumbnails](feature-thumbnail-upload.md). Migrating before then means migrating twice.
 
 ## Notes
 

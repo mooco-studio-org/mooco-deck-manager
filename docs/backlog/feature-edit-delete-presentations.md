@@ -15,8 +15,9 @@ small, not because it is optional.
 
 ## Notes
 
-- Address entries by their database `id`, not by slug — assets have no slug (see
-  [decks and assets](data-deck-and-asset-entries.md)).
+- Address entries by their database `id`, not by slug — assets have no slug.
+- Changing an entry's type on edit would drop or mint a slug; a deck turning into an asset
+  breaks its shared links. Decide whether to allow it.
 - A deck's slug must **not** change on edit, even when the title does. This is an
   architecture rule in `CLAUDE.md`, and changing it would break every shared link.
 - Every mutation needs its authorisation check inside the Server Action itself. Server

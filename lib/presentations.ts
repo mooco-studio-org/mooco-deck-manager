@@ -2,33 +2,45 @@ import { slugify } from "./slug";
 
 export type Visibility = "internal" | "public";
 
-export type Presentation = {
-  slug: string;
+type EntryBase = {
+  id: string;
   title: string;
   description: string | null;
-  publishedId: string;
-  fileId: string | null;
   tags: string[];
   visibility: Visibility;
   createdAt: string;
   updatedAt: string;
 };
 
+export type Deck = EntryBase & {
+  type: "deck";
+  slug: string;
+  publishedId: string;
+  fileId: string | null;
+};
+
+// Assets live outside Google Slides, so they are the one kind of entry that stores URLs.
+export type Asset = EntryBase & {
+  type: "asset";
+  visitUrl: string;
+  fileUrl: string | null;
+};
+
+export type Entry = Deck | Asset;
+
 export type Viewer = {
   isTeamMember: boolean;
 };
 
-export type PresentationDraft = {
-  title: string;
-  description: string | null;
-  publishedId: string;
-  fileId: string | null;
-  tags: string[];
-  visibility: Visibility;
-};
+type DraftOf<T extends Entry> = Omit<T, "id" | "createdAt" | "updatedAt" | "slug">;
 
-const seed: Presentation[] = [
+export type EntryDraft = DraftOf<Deck> | DraftOf<Asset>;
+
+type SeedEntry = Omit<Deck, "id"> | Omit<Asset, "id">;
+
+const seed: SeedEntry[] = [
   {
+    type: "deck",
     slug: "mooco-studio-credentials",
     title: "MOOCO Studio Credentials",
     description: "Who we are, what we do, and the work we are proudest of.",
@@ -40,6 +52,7 @@ const seed: Presentation[] = [
     updatedAt: "2026-01-14T10:00:00.000Z",
   },
   {
+    type: "deck",
     slug: "brand-strategy-framework",
     title: "Brand Strategy Framework",
     description: "The method we walk clients through in the discovery phase.",
@@ -51,6 +64,7 @@ const seed: Presentation[] = [
     updatedAt: "2026-03-11T16:45:00.000Z",
   },
   {
+    type: "deck",
     slug: "2026-rate-card",
     title: "2026 Rate Card",
     description: "Internal pricing reference. Not for client distribution.",
@@ -62,17 +76,18 @@ const seed: Presentation[] = [
     updatedAt: "2026-06-22T11:20:00.000Z",
   },
   {
-    slug: "motion-reel-q2",
+    type: "asset",
     title: "Motion Reel Q2",
     description: null,
-    publishedId: "2PACX-1vTmotion0ijK",
-    fileId: null,
+    visitUrl: "https://drive.google.com/file/d/7opMotionReel/view",
+    fileUrl: null,
     tags: ["motion", "reel", "showcase"],
     visibility: "public",
     createdAt: "2026-04-18T14:10:00.000Z",
     updatedAt: "2026-04-18T14:10:00.000Z",
   },
   {
+    type: "deck",
     slug: "onboarding-new-designers",
     title: "Onboarding New Designers",
     description: "Everything a designer needs in their first two weeks.",
@@ -84,6 +99,7 @@ const seed: Presentation[] = [
     updatedAt: "2026-07-30T10:05:00.000Z",
   },
   {
+    type: "deck",
     slug: "packaging-case-studies",
     title: "Packaging Case Studies",
     description: "Six packaging projects, with results.",
@@ -96,58 +112,65 @@ const seed: Presentation[] = [
   },
 ];
 
-const store = new Map(seed.map((presentation) => [presentation.slug, presentation]));
+const store = new Map<string, Entry>(
+  seed.map((entry) => {
+    const id = crypto.randomUUID();
+    return [id, { ...entry, id }];
+  }),
+);
 
-function canView(presentation: Presentation, viewer: Viewer): boolean {
-  return viewer.isTeamMember || presentation.visibility === "public";
+function canView(entry: Entry, viewer: Viewer): boolean {
+  return viewer.isTeamMember || entry.visibility === "public";
+}
+
+function findDeck(slug: string): Deck | undefined {
+  for (const entry of store.values()) {
+    if (entry.type === "deck" && entry.slug === slug) {
+      return entry;
+    }
+  }
+  return undefined;
 }
 
 function uniqueSlug(title: string): string {
   const base = slugify(title);
-  if (!store.has(base)) {
+  if (!findDeck(base)) {
     return base;
   }
 
   let suffix = 2;
-  while (store.has(`${base}-${suffix}`)) {
+  while (findDeck(`${base}-${suffix}`)) {
     suffix += 1;
   }
   return `${base}-${suffix}`;
 }
 
-export async function listPresentations(viewer: Viewer): Promise<Presentation[]> {
+export async function listEntries(viewer: Viewer): Promise<Entry[]> {
   return [...store.values()]
-    .filter((presentation) => canView(presentation, viewer))
+    .filter((entry) => canView(entry, viewer))
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
-export async function getPresentationBySlug(
-  slug: string,
-  viewer: Viewer,
-): Promise<Presentation | null> {
-  const presentation = store.get(slug);
-  if (!presentation || !canView(presentation, viewer)) {
+export async function getDeckBySlug(slug: string, viewer: Viewer): Promise<Deck | null> {
+  const deck = findDeck(slug);
+  if (!deck || !canView(deck, viewer)) {
     return null;
   }
-  return presentation;
+  return deck;
 }
 
-export async function createPresentation(
-  draft: PresentationDraft,
-  viewer: Viewer,
-): Promise<Presentation> {
+export async function createEntry(draft: EntryDraft, viewer: Viewer): Promise<Entry> {
   if (!viewer.isTeamMember) {
-    throw new Error("Only team members can register presentations");
+    throw new Error("Only team members can register entries");
   }
 
   const now = new Date().toISOString();
-  const presentation: Presentation = {
-    ...draft,
-    slug: uniqueSlug(draft.title),
-    createdAt: now,
-    updatedAt: now,
-  };
+  const base = { id: crypto.randomUUID(), createdAt: now, updatedAt: now };
+  const entry: Entry =
+    draft.type === "deck"
+      ? { ...draft, ...base, slug: uniqueSlug(draft.title) }
+      : { ...draft, ...base };
 
-  store.set(presentation.slug, presentation);
-  return presentation;
+  store.set(entry.id, entry);
+  return entry;
 }

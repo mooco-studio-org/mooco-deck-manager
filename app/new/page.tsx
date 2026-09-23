@@ -1,9 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { NewPresentationForm } from "./form";
+import { NewEntryForm } from "./form";
 
 export const metadata: Metadata = {
-  title: "Register a deck",
+  title: "Add to the index",
 };
 
 export default function NewPresentationPage() {
@@ -16,13 +16,13 @@ export default function NewPresentationPage() {
         ← All decks
       </Link>
 
-      <h1 className="mt-6 text-3xl font-semibold tracking-tight">Register a deck</h1>
+      <h1 className="mt-6 text-3xl font-semibold tracking-tight">Add to the index</h1>
       <p className="mt-2 text-sm opacity-70">
-        Add a presentation to the index. The deck gets its own page on this subdomain,
-        ready to send to a client.
+        A deck gets its own page on this subdomain, ready to send to a client. An asset
+        is listed in the index and opens wherever it is hosted.
       </p>
 
-      <NewPresentationForm />
+      <NewEntryForm />
     </main>
   );
 }

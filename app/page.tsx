@@ -1,6 +1,7 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { getViewer } from "@/lib/viewer";
-import { listPresentations, type Presentation } from "@/lib/presentations";
+import { listEntries, type Entry } from "@/lib/presentations";
 import { editorUrl } from "@/lib/google-slides";
 
 function readParam(
@@ -11,20 +12,64 @@ function readParam(
   return (Array.isArray(value) ? value[0] : value) ?? "";
 }
 
-function matches(presentation: Presentation, query: string, tag: string): boolean {
-  const haystack = [
-    presentation.title,
-    presentation.description ?? "",
-    ...presentation.tags,
-  ]
+function matches(entry: Entry, query: string, tag: string): boolean {
+  const haystack = [entry.title, entry.description ?? "", ...entry.tags]
     .join(" ")
     .toLowerCase();
 
   return (
     haystack.includes(query.toLowerCase()) &&
-    (tag === "" || presentation.tags.includes(tag))
+    (tag === "" || entry.tags.includes(tag))
   );
 }
+
+const actionClass = "underline underline-offset-4 opacity-70 hover:opacity-100";
+
+function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer" className={actionClass}>
+      {children}
+    </a>
+  );
+}
+
+function EntryActions({ entry }: { entry: Entry }) {
+  if (entry.type === "asset") {
+    return (
+      <>
+        <ExternalLink href={entry.visitUrl}>Visit</ExternalLink>
+        {entry.fileUrl && <ExternalLink href={entry.fileUrl}>File</ExternalLink>}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ExternalLink href={`/${entry.slug}`}>Present</ExternalLink>
+      {entry.fileId && <ExternalLink href={editorUrl(entry.fileId)}>Edit</ExternalLink>}
+    </>
+  );
+}
+
+const titleClass = "text-lg font-medium underline-offset-4 hover:underline";
+
+function EntryTitle({ entry }: { entry: Entry }) {
+  if (entry.type === "asset") {
+    return (
+      <a href={entry.visitUrl} target="_blank" rel="noreferrer" className={titleClass}>
+        {entry.title}
+      </a>
+    );
+  }
+
+  return (
+    <Link href={`/${entry.slug}`} className={titleClass}>
+      {entry.title}
+    </Link>
+  );
+}
+
+const badgeClass = "rounded-full border border-current/30 px-2 py-0.5";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const params = await searchParams;
@@ -32,10 +77,10 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const tag = readParam(params, "tag");
 
   const viewer = await getViewer();
-  const presentations = await listPresentations(viewer);
-  const visible = presentations.filter((p) => matches(p, query, tag));
+  const entries = await listEntries(viewer);
+  const visible = entries.filter((entry) => matches(entry, query, tag));
 
-  const tags = [...new Set(presentations.flatMap((p) => p.tags))].sort();
+  const tags = [...new Set(entries.flatMap((entry) => entry.tags))].sort();
 
   return (
     <main className="mx-auto w-full max-w-4xl px-6 py-12">
@@ -43,14 +88,14 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">MOOCO Decks</h1>
           <p className="mt-1 text-sm opacity-60">
-            {presentations.length} presentations indexed
+            {entries.length} entries indexed
           </p>
         </div>
         <Link
           href="/new"
           className="rounded-md border border-current/20 px-4 py-2 text-sm font-medium transition hover:bg-current/5"
         >
-          Register a deck
+          Add to the index
         </Link>
       </header>
 
@@ -61,7 +106,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           name="q"
           defaultValue={query}
           placeholder="Search by name, description or tag"
-          aria-label="Search presentations"
+          aria-label="Search the index"
           className="w-full rounded-md border border-current/20 bg-transparent px-3 py-2 text-sm outline-none focus:border-current/50"
         />
         <button
@@ -98,52 +143,29 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
       {visible.length === 0 ? (
         <p className="mt-12 text-sm opacity-60">
-          No presentations match this search.
+          Nothing matches this search.
         </p>
       ) : (
         <ul className="mt-8 divide-y divide-current/10 border-y border-current/10">
-          {visible.map((presentation) => (
-            <li key={presentation.slug} className="py-5">
+          {visible.map((entry) => (
+            <li key={entry.id} className="py-5">
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <Link
-                  href={`/${presentation.slug}`}
-                  className="text-lg font-medium underline-offset-4 hover:underline"
-                >
-                  {presentation.title}
-                </Link>
+                <EntryTitle entry={entry} />
                 <div className="flex gap-3 text-sm">
-                  <a
-                    href={`/${presentation.slug}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline underline-offset-4 opacity-70 hover:opacity-100"
-                  >
-                    Present
-                  </a>
-                  {presentation.fileId && (
-                    <a
-                      href={editorUrl(presentation.fileId)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="underline underline-offset-4 opacity-70 hover:opacity-100"
-                    >
-                      Edit
-                    </a>
-                  )}
+                  <EntryActions entry={entry} />
                 </div>
               </div>
 
-              {presentation.description && (
-                <p className="mt-1 text-sm opacity-70">{presentation.description}</p>
+              {entry.description && (
+                <p className="mt-1 text-sm opacity-70">{entry.description}</p>
               )}
 
               <div className="mt-2 flex flex-wrap items-center gap-2 text-xs opacity-60">
-                {presentation.visibility === "internal" && (
-                  <span className="rounded-full border border-current/30 px-2 py-0.5">
-                    internal
-                  </span>
+                {entry.type === "asset" && <span className={badgeClass}>asset</span>}
+                {entry.visibility === "internal" && (
+                  <span className={badgeClass}>internal</span>
                 )}
-                {presentation.tags.join(" · ")}
+                {entry.tags.join(" · ")}
               </div>
             </li>
           ))}
