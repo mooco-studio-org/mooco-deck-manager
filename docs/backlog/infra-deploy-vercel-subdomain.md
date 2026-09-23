@@ -16,8 +16,9 @@ deploy without auth would publish them openly.
 
 ## Notes
 
-- Production environment variables: the Supabase URL and keys. Only values that are safe to
-  be public may carry the `NEXT_PUBLIC_` prefix.
+- Production environment variables: `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (see
+  `.env.example`). Only values that are safe to be public may carry the `NEXT_PUBLIC_`
+  prefix — never the secret key.
 - The Google OAuth callback URL has to be registered for the real domain, not just
   `localhost`. This is the step most likely to be forgotten.
 - Decide the subdomain with the team before configuring DNS.

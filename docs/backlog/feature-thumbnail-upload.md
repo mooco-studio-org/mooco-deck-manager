@@ -10,9 +10,8 @@ only shows text.
 
 ## When
 
-After Supabase is integrated — the image needs somewhere durable to live, and the
-in-memory store cannot hold it. Before [migrating the reference index](data-migrate-reference-index.md),
-which brings 43 existing thumbnails.
+Before [migrating the reference index](data-migrate-reference-index.md), which brings 43
+existing thumbnails.
 
 ## Notes
 

@@ -17,9 +17,8 @@ Routes:
 - `/new` — form to register a deck or an asset.
 - `/<slug>` — full-screen wrapper that plays a deck. This is the link sent to clients.
 
-All entry data lives in a database (Supabase, schema in `supabase/migrations/`, not yet
-wired into the app); until it is, `lib/presentations.ts` backs the same interface with an
-in-memory store. The index and the `/<slug>` pages are built from it.
+All entry data lives in Supabase (schema in `supabase/migrations/`), read and written
+only through `lib/presentations.ts`. The index and the `/<slug>` pages are built from it.
 
 ## Stack
 
@@ -27,7 +26,10 @@ in-memory store. The index and the `/<slug>` pages are built from it.
   `node_modules/next/dist/docs/` before writing framework code (see top of this file).
 - **React 19.2** / **TypeScript 5** (strict)
 - **Tailwind CSS 4** (via `@tailwindcss/postcss`)
-- **Supabase** (planned) — database for presentation entries
+- **Supabase** — Postgres database for entries, via `@supabase/supabase-js`. Until
+  Supabase Auth lands, the server uses the secret key (`SUPABASE_SECRET_KEY`), which
+  bypasses RLS, so authorization lives in `lib/`. Migrations are applied by pasting them
+  into the Supabase SQL Editor, in filename order.
 - **Yarn 1 (classic)** — dependencies require Node `^20.19 || ^22.13 || >=24`; on
   Node 23 install with `yarn install --ignore-engines`
 - ESLint 9 with `eslint-config-next`
