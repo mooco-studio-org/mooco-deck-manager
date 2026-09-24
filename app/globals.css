@@ -1,27 +1,40 @@
 @import "tailwindcss";
 @source not "../reference";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Palette from the reference index (reference/vanilla-deck-manager): a light page with
+   dark deck cards. It is light-only by design, like the reference. */
+@theme {
+  --color-page: #ffffff;
+  --color-surface-alt: #f4f4f2;
+  --color-surface-alt-hover: #ececea;
+  --color-line: #e8e8e8;
+  --color-ink: #000000;
+  --color-ink-muted: #8e8e8e;
+  --color-ink-faint: #b8b8b8;
+  --color-card: #0e0e0d;
+  --color-card-surface: #1a1a19;
+  --color-card-line: #262624;
+  --color-card-ink: #f4f4f2;
+  --color-card-ink-muted: #8a8a86;
+  --color-card-ink-faint: #55554f;
+  --color-accent: #ffe000;
+  --color-accent-hover: #ffee5c;
+  --color-danger: #d43d3d;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-onest), system-ui, -apple-system, "Helvetica Neue", sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-page);
+  color: var(--color-ink);
   font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
