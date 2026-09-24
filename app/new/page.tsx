@@ -1,12 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { groupCategories, listCategories } from "@/lib/categories";
 import { NewEntryForm } from "./form";
 
 export const metadata: Metadata = {
   title: "Add to the index",
 };
 
-export default function NewPresentationPage() {
+export default async function NewPresentationPage() {
+  const categoryGroups = groupCategories(await listCategories());
+
   return (
     <main className="mx-auto w-full max-w-2xl px-6 py-12">
       <Link
@@ -22,7 +25,7 @@ export default function NewPresentationPage() {
         is listed in the index and opens wherever it is hosted.
       </p>
 
-      <NewEntryForm />
+      <NewEntryForm categoryGroups={categoryGroups} />
     </main>
   );
 }

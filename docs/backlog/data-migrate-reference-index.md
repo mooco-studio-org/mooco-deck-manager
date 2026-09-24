@@ -10,11 +10,14 @@ app is an empty shell and the team keeps maintaining two lists.
 
 ## When
 
-After the model decisions this depends on are settled: [categories](feature-categories-and-groups.md) and
-[thumbnails](feature-thumbnail-upload.md). Migrating before then means migrating twice.
+After [thumbnails](feature-thumbnail-upload.md) exist — the migration brings 43 of them.
+Migrating before then means migrating twice.
 
 ## Notes
 
+- Categories are already in the database, seeded with the reference's seven by
+  `supabase/migrations/20260924100000_seed_categories_and_require_category.sql`. Map each
+  reference entry to its category by name.
 - Source of truth is the JSON block `<script id="links-data">` in
   `reference/vanilla-deck-manager/mooco-links.html` (`sheets.evergreen.categories[].links[]`),
   not the `.xlsx`, which is an older snapshot. Shape documented in its `ARCHITECTURE.md` §4.

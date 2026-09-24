@@ -3,7 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getViewer } from "@/lib/viewer";
-import { createEntry, type EntryDraft, type Visibility } from "@/lib/presentations";
+import {
+  createEntry,
+  type EntryDraft,
+  type Viewer,
+  type Visibility,
+} from "@/lib/presentations";
+import { findOrCreateCategory, listCategories } from "@/lib/categories";
 import { extractFileId, extractPublishedId } from "@/lib/google-slides";
 
 export type FormState = {
@@ -11,6 +17,17 @@ export type FormState = {
 };
 
 type Errors = Record<string, string>;
+
+// The select's sentinel for "create a category from the text field instead".
+const NEW_CATEGORY = "new";
+
+type CategoryChoice = { id: string } | { newName: string };
+
+// A new category is only created once the rest of the form is valid, so the draft
+// travels without its categoryId until then.
+type Uncategorized<T> = T extends unknown ? Omit<T, "categoryId"> : never;
+
+type Pending = { draft: Uncategorized<EntryDraft>; category: CategoryChoice };
 
 function readText(formData: FormData, field: string): string {
   const value = formData.get(field);
@@ -79,8 +96,35 @@ function readAssetUrls(formData: FormData, errors: Errors) {
   return { visitUrl, fileUrl };
 }
 
-function readDraft(formData: FormData): { draft: EntryDraft } | { errors: Errors } {
+function readCategory(
+  formData: FormData,
+  knownIds: Set<string>,
+  errors: Errors,
+): CategoryChoice | null {
+  const selected = readText(formData, "category");
+
+  if (selected === NEW_CATEGORY) {
+    const newName = readText(formData, "newCategory");
+    if (!newName) {
+      errors.newCategory = "Name the new category.";
+      return null;
+    }
+    return { newName };
+  }
+
+  if (!knownIds.has(selected)) {
+    errors.category = "Pick a category.";
+    return null;
+  }
+  return { id: selected };
+}
+
+function readDraft(
+  formData: FormData,
+  knownCategoryIds: Set<string>,
+): Pending | { errors: Errors } {
   const errors: Errors = {};
+  const category = readCategory(formData, knownCategoryIds, errors);
   const type = readText(formData, "type");
   const title = readText(formData, "title");
   const visibility = readText(formData, "visibility") as Visibility;
@@ -102,19 +146,30 @@ function readDraft(formData: FormData): { draft: EntryDraft } | { errors: Errors
     visibility,
   };
 
-  // The required ids and URLs are only ever null alongside an error, but narrowing them
-  // here keeps the drafts free of a cast.
+  // The category and the required ids and URLs are only ever null alongside an error,
+  // but narrowing them here keeps the drafts free of a cast.
   if (type === "deck") {
     const { publishedId, fileId } = readDeckIds(formData, errors);
-    return Object.keys(errors).length > 0 || !publishedId
+    return Object.keys(errors).length > 0 || !publishedId || !category
       ? { errors }
-      : { draft: { ...common, type, publishedId, fileId } };
+      : { draft: { ...common, type, publishedId, fileId }, category };
   }
 
   const { visitUrl, fileUrl } = readAssetUrls(formData, errors);
-  return Object.keys(errors).length > 0 || !visitUrl
+  return Object.keys(errors).length > 0 || !visitUrl || !category
     ? { errors }
-    : { draft: { ...common, type, visitUrl, fileUrl } };
+    : { draft: { ...common, type, visitUrl, fileUrl }, category };
+}
+
+async function resolveCategoryId(
+  choice: CategoryChoice,
+  viewer: Viewer,
+): Promise<string> {
+  if ("id" in choice) {
+    return choice.id;
+  }
+  const category = await findOrCreateCategory(choice.newName, viewer);
+  return category.id;
 }
 
 export async function registerEntry(
@@ -127,12 +182,14 @@ export async function registerEntry(
     return { errors: { form: "You are not allowed to register entries." } };
   }
 
-  const result = readDraft(formData);
+  const categories = await listCategories();
+  const result = readDraft(formData, new Set(categories.map((category) => category.id)));
   if ("errors" in result) {
     return { errors: result.errors };
   }
 
-  const entry = await createEntry(result.draft, viewer);
+  const categoryId = await resolveCategoryId(result.category, viewer);
+  const entry = await createEntry({ ...result.draft, categoryId }, viewer);
 
   // redirect() throws a control-flow exception, so revalidation has to happen first.
   revalidatePath("/");

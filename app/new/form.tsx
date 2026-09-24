@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import type { CategoryGroup } from "@/lib/categories";
 import { registerEntry, type FormState } from "./actions";
 
 const initialState: FormState = { errors: {} };
@@ -21,9 +22,37 @@ function FieldError({ message }: { message?: string }) {
 
 type EntryType = "deck" | "asset";
 
-export function NewEntryForm() {
+function CategoryOptions({ groups }: { groups: CategoryGroup[] }) {
+  return groups.map((group) => {
+    const options = group.categories.map((category) => (
+      <option key={category.id} value={category.id}>
+        {category.name}
+      </option>
+    ));
+    return group.name ? (
+      <optgroup key={group.categories[0].id} label={group.name}>
+        {options}
+      </optgroup>
+    ) : (
+      options
+    );
+  });
+}
+
+export function NewEntryForm({ categoryGroups }: { categoryGroups: CategoryGroup[] }) {
   const [state, formAction, pending] = useActionState(registerEntry, initialState);
   const [type, setType] = useState<EntryType>("deck");
+  const [category, setCategory] = useState("");
+  const categorySelect = useRef<HTMLSelectElement>(null);
+
+  // React resets the form after every submission, which puts the select back on its
+  // placeholder while `category` still drives the fields shown. Re-apply the choice once
+  // the result arrives.
+  useEffect(() => {
+    if (categorySelect.current) {
+      categorySelect.current.value = category;
+    }
+  }, [state, category]);
 
   return (
     <form action={formAction} className="mt-8 flex flex-col gap-5">
@@ -148,6 +177,40 @@ export function NewEntryForm() {
           </div>
         </>
       )}
+
+      <div>
+        <label htmlFor="category" className="text-sm font-medium">
+          Category
+        </label>
+        <select
+          id="category"
+          name="category"
+          required
+          ref={categorySelect}
+          defaultValue=""
+          onChange={(event) => setCategory(event.target.value)}
+          className={`mt-1 ${fieldClass}`}
+        >
+          <option value="" disabled>
+            Pick a category
+          </option>
+          <CategoryOptions groups={categoryGroups} />
+          <option value="new">+ New category…</option>
+        </select>
+        <FieldError message={state.errors.category} />
+        {category === "new" && (
+          <>
+            <input
+              name="newCategory"
+              required
+              aria-label="New category name"
+              placeholder="New category name"
+              className={`mt-2 ${fieldClass}`}
+            />
+            <FieldError message={state.errors.newCategory} />
+          </>
+        )}
+      </div>
 
       <div>
         <label htmlFor="tags" className="text-sm font-medium">

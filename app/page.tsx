@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { getViewer } from "@/lib/viewer";
 import { listEntries, type Entry } from "@/lib/presentations";
+import { groupCategories, listCategories, type CategoryGroup } from "@/lib/categories";
 import { editorUrl } from "@/lib/google-slides";
 
 function readParam(
@@ -12,14 +13,82 @@ function readParam(
   return (Array.isArray(value) ? value[0] : value) ?? "";
 }
 
-function matches(entry: Entry, query: string, tag: string): boolean {
+type Filters = { q: string; tag: string; category: string };
+
+function matches(entry: Entry, { q, tag, category }: Filters): boolean {
   const haystack = [entry.title, entry.description ?? "", ...entry.tags]
     .join(" ")
     .toLowerCase();
 
   return (
-    haystack.includes(query.toLowerCase()) &&
-    (tag === "" || entry.tags.includes(tag))
+    haystack.includes(q.toLowerCase()) &&
+    (tag === "" || entry.tags.includes(tag)) &&
+    (category === "" || entry.categoryId === category)
+  );
+}
+
+// Clicking the active filter clears it; the other filters are kept either way.
+function toggleHref(filters: Filters, key: "tag" | "category", value: string) {
+  const next = { ...filters, [key]: filters[key] === value ? "" : value };
+  const query = Object.fromEntries(Object.entries(next).filter(([, v]) => v !== ""));
+  return { pathname: "/", query };
+}
+
+function FilterChip({
+  href,
+  active,
+  children,
+}: {
+  href: ReturnType<typeof toggleHref>;
+  active: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-pressed={active}
+      className={`rounded-full border px-3 py-1 text-xs transition ${
+        active
+          ? "border-current bg-current/10 font-medium"
+          : "border-current/20 opacity-70 hover:opacity-100"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function CategoryNav({
+  groups,
+  filters,
+  counts,
+}: {
+  groups: CategoryGroup[];
+  filters: Filters;
+  counts: Map<string, number>;
+}) {
+  return (
+    <nav className="mt-6 flex flex-wrap gap-x-6 gap-y-3" aria-label="Filter by category">
+      {groups.map((group) => (
+        <div key={group.categories[0].id}>
+          <p className="mb-1 h-4 text-[10px] font-medium uppercase tracking-wider opacity-50">
+            {group.name}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {group.categories.map((category) => (
+              <FilterChip
+                key={category.id}
+                href={toggleHref(filters, "category", category.id)}
+                active={filters.category === category.id}
+              >
+                {category.name}{" "}
+                <span className="opacity-60">{counts.get(category.id) ?? 0}</span>
+              </FilterChip>
+            ))}
+          </div>
+        </div>
+      ))}
+    </nav>
   );
 }
 
@@ -73,14 +142,22 @@ const badgeClass = "rounded-full border border-current/30 px-2 py-0.5";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   const params = await searchParams;
-  const query = readParam(params, "q");
-  const tag = readParam(params, "tag");
+  const filters: Filters = {
+    q: readParam(params, "q"),
+    tag: readParam(params, "tag"),
+    category: readParam(params, "category"),
+  };
 
   const viewer = await getViewer();
-  const entries = await listEntries(viewer);
-  const visible = entries.filter((entry) => matches(entry, query, tag));
+  const [entries, categories] = await Promise.all([listEntries(viewer), listCategories()]);
+  const visible = entries.filter((entry) => matches(entry, filters));
 
   const tags = [...new Set(entries.flatMap((entry) => entry.tags))].sort();
+  const categoryNames = new Map(categories.map((category) => [category.id, category.name]));
+  const counts = new Map<string, number>();
+  for (const entry of entries) {
+    counts.set(entry.categoryId, (counts.get(entry.categoryId) ?? 0) + 1);
+  }
 
   return (
     <main className="mx-auto w-full max-w-4xl px-6 py-12">
@@ -100,11 +177,14 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       </header>
 
       <form className="mt-8 flex gap-2">
-        {tag && <input type="hidden" name="tag" value={tag} />}
+        {filters.tag && <input type="hidden" name="tag" value={filters.tag} />}
+        {filters.category && (
+          <input type="hidden" name="category" value={filters.category} />
+        )}
         <input
           type="search"
           name="q"
-          defaultValue={query}
+          defaultValue={filters.q}
           placeholder="Search by name, description or tag"
           aria-label="Search the index"
           className="w-full rounded-md border border-current/20 bg-transparent px-3 py-2 text-sm outline-none focus:border-current/50"
@@ -117,28 +197,18 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </button>
       </form>
 
-      <nav className="mt-4 flex flex-wrap gap-2" aria-label="Filter by tag">
-        {tags.map((name) => {
-          const active = name === tag;
-          const href = active
-            ? { pathname: "/", query: query ? { q: query } : {} }
-            : { pathname: "/", query: query ? { q: query, tag: name } : { tag: name } };
+      <CategoryNav groups={groupCategories(categories)} filters={filters} counts={counts} />
 
-          return (
-            <Link
-              key={name}
-              href={href}
-              aria-pressed={active}
-              className={`rounded-full border px-3 py-1 text-xs transition ${
-                active
-                  ? "border-current bg-current/10 font-medium"
-                  : "border-current/20 opacity-70 hover:opacity-100"
-              }`}
-            >
-              {name}
-            </Link>
-          );
-        })}
+      <nav className="mt-4 flex flex-wrap gap-2" aria-label="Filter by tag">
+        {tags.map((name) => (
+          <FilterChip
+            key={name}
+            href={toggleHref(filters, "tag", name)}
+            active={filters.tag === name}
+          >
+            {name}
+          </FilterChip>
+        ))}
       </nav>
 
       {visible.length === 0 ? (
@@ -161,6 +231,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
               )}
 
               <div className="mt-2 flex flex-wrap items-center gap-2 text-xs opacity-60">
+                <span className="font-medium">{categoryNames.get(entry.categoryId)}</span>
                 {entry.type === "asset" && <span className={badgeClass}>asset</span>}
                 {entry.visibility === "internal" && (
                   <span className={badgeClass}>internal</span>

@@ -1,12 +1,12 @@
-import "server-only";
 import { cache } from "react";
-import { createClient } from "@supabase/supabase-js";
 import { slugify } from "./slug";
+import { supabase } from "./supabase";
 
 export type Visibility = "internal" | "public";
 
 type EntryBase = {
   id: string;
+  categoryId: string;
   title: string;
   description: string | null;
   tags: string[];
@@ -43,6 +43,7 @@ export type EntryDraft = DraftOf<Deck> | DraftOf<Asset>;
 // what makes the non-null assertions in toEntry safe.
 type EntryRow = {
   id: string;
+  category_id: string;
   type: "deck" | "asset";
   slug: string | null;
   title: string;
@@ -57,26 +58,10 @@ type EntryRow = {
   updated_at: string;
 };
 
-function requireEnv(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing environment variable ${name}`);
-  }
-  return value;
-}
-
-// The secret key bypasses row level security, so every read and write here is filtered
-// by the app layer instead. It must never reach the browser — hence `server-only` above.
-// Until Supabase Auth lands there is no user session to build a per-request client from.
-const supabase = createClient(
-  requireEnv("SUPABASE_URL"),
-  requireEnv("SUPABASE_SECRET_KEY"),
-  { auth: { persistSession: false, autoRefreshToken: false } },
-);
-
 function toEntry(row: EntryRow): Entry {
   const base = {
     id: row.id,
+    categoryId: row.category_id,
     title: row.title,
     description: row.description,
     tags: row.tags,
@@ -102,6 +87,7 @@ function toRow(
   slug: string | null,
 ): Omit<EntryRow, "id" | "created_at" | "updated_at"> {
   const common = {
+    category_id: draft.categoryId,
     type: draft.type,
     slug,
     title: draft.title,
@@ -148,6 +134,10 @@ const findDeck = cache(async (slug: string): Promise<Deck | null> => {
   return data ? (toEntry(data) as Deck) : null;
 });
 
+// Static routes are matched before /[slug], so a deck given one of these slugs would be
+// unreachable. Keep in step with the top-level folders in app/.
+const RESERVED_SLUGS = ["new"];
+
 async function uniqueSlug(title: string): Promise<string> {
   const base = slugify(title);
   const { data, error } = await supabase
@@ -160,7 +150,7 @@ async function uniqueSlug(title: string): Promise<string> {
     throw error;
   }
 
-  const taken = new Set(data.map((row) => row.slug));
+  const taken = new Set([...RESERVED_SLUGS, ...data.map((row) => row.slug)]);
   if (!taken.has(base)) {
     return base;
   }
