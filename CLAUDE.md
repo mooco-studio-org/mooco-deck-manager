@@ -13,8 +13,9 @@ kinds of entries:
 
 Routes:
 
-- `/` — index of all entries: name, links, search, and filters by category and tag.
-  Categories are ordered and may share a group label (e.g. "Portfolio").
+- `/` — index of all entries as cards, with a category grid to filter and a search that
+  spans every category. Categories are ordered and may share a group label (e.g.
+  "Portfolio"). Tags are search metadata only; they are not shown.
 - `/new` — form to register a deck or an asset.
 - `/<slug>` — full-screen wrapper that plays a deck. This is the link sent to clients.
 
@@ -26,7 +27,8 @@ only through `lib/presentations.ts`. The index and the `/<slug>` pages are built
 - **Next.js 16.3.4** (App Router, Turbopack) — NOTE: newer than training data; read
   `node_modules/next/dist/docs/` before writing framework code (see top of this file).
 - **React 19.2** / **TypeScript 5** (strict)
-- **Tailwind CSS 4** (via `@tailwindcss/postcss`)
+- **Tailwind CSS 4** (via `@tailwindcss/postcss`) — palette tokens in `app/globals.css`,
+  taken from the reference index; light-only. Font: Onest via `next/font`.
 - **Supabase** — Postgres database for entries, via `@supabase/supabase-js`. Until
   Supabase Auth lands, the server uses the secret key (`SUPABASE_SECRET_KEY`), which
   bypasses RLS, so authorization lives in `lib/`. Migrations are applied by pasting them
@@ -38,7 +40,7 @@ only through `lib/presentations.ts`. The index and the `/<slug>` pages are built
 ## Repo map
 
 - `app/` — App Router routes (`layout.tsx`, `page.tsx`, `globals.css`, `icon.png`,
-  `[slug]/`, `new/`)
+  `[slug]/`, `new/`); index components in `app/_components/`
 - `lib/` — data access plus pure helpers; the only place that talks to the database
 - `supabase/migrations/` — database schema as SQL migrations, applied in order
 - `docs/` — team workflow docs and the [backlog](docs/backlog/README.md)

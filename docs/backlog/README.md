@@ -22,6 +22,4 @@ New entries land here only after asking the user (see the corresponding rule in 
 Ordered by dependency; the migration comes last.
 
 - [Upload a thumbnail for each presentation](feature-thumbnail-upload.md) — image upload in `/new`, stored in Supabase Storage.
-- [Whole-word matching for tags in search](feature-search-whole-word-tags.md) — so `IA` stops matching "Radiografias".
-- [Port the reference index UI](feature-port-reference-index-ui.md) — category grid and deck cards with thumbnails.
 - [Migrate the reference index into the database](data-migrate-reference-index.md) — URLs to Slides ids; published ids are not in the data and must be recovered.
