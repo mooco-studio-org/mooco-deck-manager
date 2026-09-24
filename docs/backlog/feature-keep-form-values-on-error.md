@@ -11,8 +11,8 @@ grows (categories, thumbnails).
 
 ## When
 
-Before the form gains more fields — the [thumbnail upload](feature-thumbnail-upload.md) in
-particular, since a file input cannot be refilled by the browser at all.
+Soon: the form now has a thumbnail field, and a validation error on any other field means
+choosing the image again, since a browser cannot refill a file input.
 
 ## Notes
 
@@ -22,5 +22,7 @@ particular, since a file input cannot be refilled by the browser at all.
 - Usual approach: return the submitted values in `FormState` alongside `errors` and feed
   them back as `defaultValue`s. Check the Next 16 forms guide
   (`node_modules/next/dist/docs/01-app/02-guides/forms.md`) for the current recommendation.
-- File inputs cannot be restored; the thumbnail flow will need its own answer (e.g. upload
-  first, keep the stored path in state).
+- File inputs cannot be restored. Keeping the thumbnail across a failed submission means
+  uploading it when it is picked and carrying the stored path in state — which also needs
+  a cleanup for images whose form is abandoned. That trade-off was declined when
+  thumbnails shipped; revisit it here.

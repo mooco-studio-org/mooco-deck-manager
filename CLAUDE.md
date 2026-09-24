@@ -29,7 +29,8 @@ only through `lib/presentations.ts`. The index and the `/<slug>` pages are built
 - **React 19.2** / **TypeScript 5** (strict)
 - **Tailwind CSS 4** (via `@tailwindcss/postcss`) — palette tokens in `app/globals.css`,
   taken from the reference index; light-only. Font: Onest via `next/font`.
-- **Supabase** — Postgres database for entries, via `@supabase/supabase-js`. Until
+- **Supabase** — Postgres database for entries, via `@supabase/supabase-js`; thumbnails in
+  the public Storage bucket `thumbnails`, processed to 800px WebP with `sharp` on upload. Until
   Supabase Auth lands, the server uses the secret key (`SUPABASE_SECRET_KEY`), which
   bypasses RLS, so authorization lives in `lib/`. Migrations are applied by pasting them
   into the Supabase SQL Editor, in filename order.

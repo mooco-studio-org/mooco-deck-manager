@@ -24,6 +24,12 @@ deployed ([deploy](infra-deploy-vercel-subdomain.md) is already blocked on auth)
 - **Entries**: list with filters, edit and delete. The rules for that live in
   [edit and delete](feature-edit-delete-presentations.md) — this panel is where that UI
   lands.
+- **Descriptions and tags** of the imported catalog are meant to be filled in here by the
+  team — none of the 25 imported entries have them.
+- **Thumbnails**: replace and remove. Replacing uploads the new image before switching
+  `thumbnail_path`, then deletes the old object (`deleteThumbnail` in `lib/thumbnails.ts`);
+  removing deletes the object and clears the column. Four imported entries still have
+  none: Disney DCP, AB2 Commit to the Bitt, IA Studio and IA Reel.
 - **Categories**: rename, reorder (`position`), set or clear `group_name`, and delete only
   when no entry uses it (the foreign key is `on delete restrict`, so the database already
   refuses otherwise — surface that as a clear message).
