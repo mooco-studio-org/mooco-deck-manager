@@ -50,13 +50,13 @@ export function SiteHeader({
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-page/95 backdrop-blur-md">
       <div className="mx-auto flex h-[68px] max-w-[1400px] items-center gap-3 px-5 sm:h-[88px] sm:gap-6 sm:px-12">
-        <Link href="/" aria-label="All entries">
+        <Link href="/" aria-label="Todas las entradas">
           <Logo />
         </Link>
         <div className="flex-1" />
         <p className="hidden text-[11.5px] font-medium tracking-[0.08em] whitespace-nowrap text-ink-muted uppercase md:block">
-          <strong className="font-semibold text-ink">{entryCount}</strong> entries ·{" "}
-          <strong className="font-semibold text-ink">{categoryCount}</strong> categories
+          <strong className="font-semibold text-ink">{entryCount}</strong> entradas ·{" "}
+          <strong className="font-semibold text-ink">{categoryCount}</strong> categorías
         </p>
         <form action="/" className="relative w-40 sm:w-60" role="search">
           <SearchIcon />
@@ -64,8 +64,8 @@ export function SiteHeader({
             type="search"
             name="q"
             defaultValue={query}
-            placeholder="Search…"
-            aria-label="Search the index"
+            placeholder="Buscar…"
+            aria-label="Buscar en el índice"
             autoComplete="off"
             className="w-full rounded-full border-[1.5px] border-line bg-page py-2.5 pr-3.5 pl-9.5 text-[13px] font-medium placeholder:text-ink-muted focus:border-ink focus:outline-none"
           />
@@ -77,7 +77,7 @@ export function SiteHeader({
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true">
             <path d="M12 5v14M5 12h14" />
           </svg>
-          Add
+          Añadir
         </Link>
       </div>
     </header>

@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     default: "MOOCO Decks",
     template: "%s · MOOCO Decks",
   },
-  description: "Index of MOOCO's slide decks.",
+  description: "Índice de presentaciones y assets de MOOCO.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang="es"
       className={`${onest.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

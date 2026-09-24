@@ -32,16 +32,16 @@ function selectEntries(entries: Entry[], query: string, category: Category | und
   if (query) {
     const found = entries.filter((entry) => matchesQuery(entry, query));
     return {
-      title: "Results",
-      subtitle: `${plural(found.length, "match", "matches")} · “${query}”`,
+      title: "Resultados",
+      subtitle: `${plural(found.length, "coincidencia", "coincidencias")} · “${query}”`,
       shown: found,
     };
   }
 
   const shown = category ? entries.filter((entry) => entry.categoryId === category.id) : entries;
   return {
-    title: category?.name ?? "All entries",
-    subtitle: plural(shown.length, "item", "items"),
+    title: category?.name ?? "Todas las entradas",
+    subtitle: plural(shown.length, "entrada", "entradas"),
     shown,
   };
 }
@@ -85,7 +85,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
           {shown.length === 0 ? (
             <p className="px-5 py-20 text-center text-sm font-medium text-ink-muted">
-              {query ? `No results for “${query}”.` : "Nothing here yet."}
+              {query ? `Sin resultados para “${query}”.` : "Todavía no hay nada aquí."}
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-5 min-[700px]:grid-cols-2 min-[1100px]:grid-cols-3">

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { CategoryGroup } from "@/lib/categories";
 
 function countLabel(count: number): string {
-  return `${count} ${count === 1 ? "item" : "items"}`;
+  return `${count} ${count === 1 ? "entrada" : "entradas"}`;
 }
 
 // Choosing a category clears the search, as in the reference: the search overrides the
@@ -23,7 +23,7 @@ export function CategoryGrid({
 }) {
   return (
     <nav
-      aria-label="Categories"
+      aria-label="Categorías"
       className="grid grid-cols-1 gap-4 min-[700px]:grid-cols-2 min-[1100px]:grid-cols-3"
     >
       {groups.flatMap((group) =>

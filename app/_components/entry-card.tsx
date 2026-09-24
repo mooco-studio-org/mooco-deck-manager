@@ -95,15 +95,15 @@ function EntryActions({ entry }: { entry: Entry }) {
   if (entry.type === "asset") {
     return (
       <>
-        <PrimaryAction href={entry.visitUrl}>Visit</PrimaryAction>
-        <SecondaryAction href={entry.fileUrl}>File</SecondaryAction>
+        <PrimaryAction href={entry.visitUrl}>Visitar</PrimaryAction>
+        <SecondaryAction href={entry.fileUrl}>Archivo</SecondaryAction>
       </>
     );
   }
 
   return (
     <>
-      <PrimaryAction href={`/${entry.slug}`}>Present</PrimaryAction>
+      <PrimaryAction href={`/${entry.slug}`}>Presentar</PrimaryAction>
       <SecondaryAction href={entry.fileId && editorUrl(entry.fileId)}>Editable</SecondaryAction>
     </>
   );
@@ -126,7 +126,7 @@ export function EntryCard({ entry, categoryName }: { entry: Entry; categoryName:
           <span>{categoryName}</span>
           <span className="flex gap-1.5">
             {entry.type === "asset" && <MetaPill>Asset</MetaPill>}
-            {entry.visibility === "internal" && <MetaPill>Internal</MetaPill>}
+            {entry.visibility === "internal" && <MetaPill>Interna</MetaPill>}
           </span>
         </div>
         <h3 className="text-xl leading-[1.2] font-bold tracking-[-0.015em]">{entry.title}</h3>
@@ -136,7 +136,7 @@ export function EntryCard({ entry, categoryName }: { entry: Entry; categoryName:
           </p>
         ) : (
           <p className="text-[13.5px] leading-normal text-card-ink-faint italic">
-            No description yet.
+            Sin descripción todavía.
           </p>
         )}
         <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-3.5">

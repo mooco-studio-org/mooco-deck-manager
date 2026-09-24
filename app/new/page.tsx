@@ -4,28 +4,29 @@ import { groupCategories, listCategories } from "@/lib/categories";
 import { NewEntryForm } from "./form";
 
 export const metadata: Metadata = {
-  title: "Add to the index",
+  title: "Nueva entrada",
 };
 
-export default async function NewPresentationPage() {
+// Styled after the reference's add dialog: a card over a muted ground, rather than a
+// modal over the index, so /new stays a plain page.
+export default async function NewEntryPage() {
   const categoryGroups = groupCategories(await listCategories());
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-6 py-12">
-      <Link
-        href="/"
-        className="text-sm underline underline-offset-4 opacity-60 hover:opacity-100"
-      >
-        ← All decks
-      </Link>
-
-      <h1 className="mt-6 text-3xl font-semibold tracking-tight">Add to the index</h1>
-      <p className="mt-2 text-sm opacity-70">
-        A deck gets its own page on this subdomain, ready to send to a client. An asset
-        is listed in the index and opens wherever it is hosted.
-      </p>
-
-      <NewEntryForm categoryGroups={categoryGroups} />
+    <main className="flex flex-1 justify-center bg-surface-alt px-4 py-10 sm:py-16">
+      <div className="h-fit w-full max-w-[520px] rounded-[20px] border border-line bg-page shadow-[0_40px_80px_rgba(0,0,0,0.12)]">
+        <div className="flex items-baseline justify-between border-b border-line px-7 pt-6 pb-5">
+          <h1 className="text-2xl leading-[1.1] font-extrabold tracking-[-0.02em]">
+            Nueva entrada
+          </h1>
+          <Link href="/" aria-label="Cerrar" className="p-1 text-ink-muted hover:text-ink">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </Link>
+        </div>
+        <NewEntryForm categoryGroups={categoryGroups} />
+      </div>
     </main>
   );
 }
