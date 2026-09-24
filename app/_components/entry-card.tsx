@@ -1,9 +1,12 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 import type { Entry } from "@/lib/presentations";
 import { editorUrl } from "@/lib/google-slides";
+import { thumbnailUrl } from "@/lib/thumbnails";
 
 // Placeholder backgrounds from the reference, picked by a hash of the title so each entry
-// keeps the same one across renders. Thumbnails will be layered on top of this.
+// keeps the same one across renders. A thumbnail is layered on top, so an entry without
+// one, or with one that fails to load, still shows the placeholder.
 const GRADIENTS = [
   ["#1c1c1b", "#2a2a28"],
   ["#1a2028", "#0d1218"],
@@ -28,13 +31,13 @@ function initialOf(title: string): string {
   return title.match(/\p{L}/u)?.[0].toUpperCase() ?? "◆";
 }
 
-function Thumbnail({ title }: { title: string }) {
+function Thumbnail({ title, path }: { title: string; path: string | null }) {
   return (
     <div
       className="relative grid aspect-[16/10] place-items-center overflow-hidden"
       style={{ background: gradientFor(title) }}
     >
-      <span className="absolute top-3.5 left-4 text-[9.5px] font-bold tracking-[0.18em] text-white/85 uppercase [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
+      <span className="absolute top-3.5 left-4 z-[3] text-[9.5px] font-bold tracking-[0.18em] text-white/85 uppercase [text-shadow:0_1px_8px_rgba(0,0,0,0.6)]">
         <span className="mr-1.5 text-[8px] opacity-70">◆</span>MOOCO
       </span>
       <span
@@ -43,6 +46,17 @@ function Thumbnail({ title }: { title: string }) {
       >
         {initialOf(title)}
       </span>
+      {path && (
+        // Uploads are already resized to 800px WebP, so optimising them again would only
+        // spend image-optimisation quota.
+        <Image
+          src={thumbnailUrl(path)}
+          alt=""
+          fill
+          unoptimized
+          className="z-[2] object-cover object-top"
+        />
+      )}
     </div>
   );
 }
@@ -120,7 +134,7 @@ function MetaPill({ children }: { children: ReactNode }) {
 export function EntryCard({ entry, categoryName }: { entry: Entry; categoryName: string }) {
   return (
     <article className="flex flex-col overflow-hidden rounded-[20px] bg-card text-card-ink transition-transform hover:-translate-y-0.5">
-      <Thumbnail title={entry.title} />
+      <Thumbnail title={entry.title} path={entry.thumbnailPath} />
       <div className="flex flex-1 flex-col gap-3 px-6 pt-[22px] pb-6">
         <div className="flex h-5 items-center justify-between gap-3 text-[10px] font-semibold tracking-[0.14em] text-card-ink-muted uppercase">
           <span>{categoryName}</span>

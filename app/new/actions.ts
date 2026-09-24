@@ -11,6 +11,8 @@ import {
 } from "@/lib/presentations";
 import { findOrCreateCategory, listCategories } from "@/lib/categories";
 import { extractFileId, extractPublishedId } from "@/lib/google-slides";
+import { deleteThumbnail, toThumbnailWebp, uploadThumbnail } from "@/lib/thumbnails";
+import { THUMBNAIL_MAX_BYTES, THUMBNAIL_TYPES } from "@/lib/thumbnail-limits";
 
 export type FormState = {
   errors: Record<string, string>;
@@ -23,11 +25,16 @@ const NEW_CATEGORY = "new";
 
 type CategoryChoice = { id: string } | { newName: string };
 
-// A new category is only created once the rest of the form is valid, so the draft
-// travels without its categoryId until then.
-type Uncategorized<T> = T extends unknown ? Omit<T, "categoryId"> : never;
+// A new category and the thumbnail upload only happen once the rest of the form is valid,
+// so the draft travels without their ids until then.
+// Omit applied to each member of a union, so the deck/asset discriminant survives.
+type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 
-type Pending = { draft: Uncategorized<EntryDraft>; category: CategoryChoice };
+type Pending = {
+  draft: DistributiveOmit<EntryDraft, "categoryId" | "thumbnailPath">;
+  category: CategoryChoice;
+  thumbnail: File | null;
+};
 
 function readText(formData: FormData, field: string): string {
   const value = formData.get(field);
@@ -119,12 +126,30 @@ function readCategory(
   return { id: selected };
 }
 
+function readThumbnail(formData: FormData, errors: Errors): File | null {
+  const file = formData.get("thumbnail");
+  // An empty file input still submits a File, with no name and no bytes.
+  if (!(file instanceof File) || file.size === 0) {
+    return null;
+  }
+  if (!THUMBNAIL_TYPES.includes(file.type)) {
+    errors.thumbnail = "La miniatura tiene que ser JPG, PNG o WebP.";
+    return null;
+  }
+  if (file.size > THUMBNAIL_MAX_BYTES) {
+    errors.thumbnail = "La miniatura no puede pesar más de 4 MB.";
+    return null;
+  }
+  return file;
+}
+
 function readDraft(
   formData: FormData,
   knownCategoryIds: Set<string>,
 ): Pending | { errors: Errors } {
   const errors: Errors = {};
   const category = readCategory(formData, knownCategoryIds, errors);
+  const thumbnail = readThumbnail(formData, errors);
   const type = readText(formData, "type");
   const title = readText(formData, "title");
   const visibility = readText(formData, "visibility") as Visibility;
@@ -152,13 +177,13 @@ function readDraft(
     const { publishedId, fileId } = readDeckIds(formData, errors);
     return Object.keys(errors).length > 0 || !publishedId || !category
       ? { errors }
-      : { draft: { ...common, type, publishedId, fileId }, category };
+      : { draft: { ...common, type, publishedId, fileId }, category, thumbnail };
   }
 
   const { visitUrl, fileUrl } = readAssetUrls(formData, errors);
   return Object.keys(errors).length > 0 || !visitUrl || !category
     ? { errors }
-    : { draft: { ...common, type, visitUrl, fileUrl }, category };
+    : { draft: { ...common, type, visitUrl, fileUrl }, category, thumbnail };
 }
 
 async function resolveCategoryId(
@@ -170,6 +195,22 @@ async function resolveCategoryId(
   }
   const category = await findOrCreateCategory(choice.newName, viewer);
   return category.id;
+}
+
+async function createWithThumbnail(
+  draft: DistributiveOmit<EntryDraft, "thumbnailPath">,
+  webp: Buffer | null,
+  viewer: Viewer,
+) {
+  const thumbnailPath = webp ? await uploadThumbnail(webp) : null;
+  try {
+    return await createEntry({ ...draft, thumbnailPath }, viewer);
+  } catch (error) {
+    if (thumbnailPath) {
+      await deleteThumbnail(thumbnailPath);
+    }
+    throw error;
+  }
 }
 
 export async function registerEntry(
@@ -188,8 +229,19 @@ export async function registerEntry(
     return { errors: result.errors };
   }
 
+  // Decoding happens before anything is written, so a file that only looks like an image
+  // is rejected without leaving a category or an upload behind.
+  let webp: Buffer | null = null;
+  if (result.thumbnail) {
+    try {
+      webp = await toThumbnailWebp(result.thumbnail);
+    } catch {
+      return { errors: { thumbnail: "No se pudo leer la imagen. Prueba con otro archivo." } };
+    }
+  }
+
   const categoryId = await resolveCategoryId(result.category, viewer);
-  const entry = await createEntry({ ...result.draft, categoryId }, viewer);
+  const entry = await createWithThumbnail({ ...result.draft, categoryId }, webp, viewer);
 
   // redirect() throws a control-flow exception, so revalidation has to happen first.
   revalidatePath("/");
