@@ -11,7 +11,7 @@ export async function generateMetadata({
   const deck = await getDeckBySlug(slug, await getViewer());
 
   if (!deck) {
-    return { title: "Not found" };
+    return { title: "No encontrada" };
   }
 
   return {

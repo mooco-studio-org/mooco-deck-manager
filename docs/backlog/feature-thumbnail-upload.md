@@ -23,7 +23,8 @@ existing thumbnails.
 - The reference normalises to WebP, 800 px wide, quality 75, rendered with
   `object-fit: cover; object-position: top center` in a 16:10 frame (`ARCHITECTURE.md` §9).
   Decide whether to convert on upload or serve through `next/image`.
-- Missing thumbnail: the reference renders a deterministic gradient plus the first letter
-  of the name. Worth keeping so entries without an image do not look broken.
+- The card already has the slot: `Thumbnail` in `app/_components/entry-card.tsx` renders
+  a gradient plus the first letter in a 16:10 frame. The image goes on top of it, so an
+  entry without one (or with a broken one) still shows the placeholder.
 - Replacing or removing the image belongs with
   [edit and delete](feature-edit-delete-presentations.md).

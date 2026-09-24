@@ -59,19 +59,19 @@ function readDeckIds(formData: FormData, errors: Errors) {
 
   const publishedId = extractPublishedId(publishedLink);
   if (!publishedLink) {
-    errors.publishedLink = "The published link is required.";
+    errors.publishedLink = "El link publicado es obligatorio.";
   } else if (!publishedId) {
     // Pasting the editor link here would render a Google sign-in wall for clients.
     errors.publishedLink = extractFileId(publishedLink)
-      ? "That is the editor link. Use File → Share → Publish to web and paste the link it gives you."
-      : "No published presentation id found in that link.";
+      ? "Ese es el link del editor. Usa Archivo → Compartir → Publicar en la Web y pega el link que te da."
+      : "No se encontró una presentación publicada en ese link.";
   }
 
   const fileId = editorLink ? extractFileId(editorLink) : null;
   if (editorLink && !fileId) {
     errors.editorLink = extractPublishedId(editorLink)
-      ? "That is the published link. Paste the address bar URL from the open presentation."
-      : "No presentation id found in that link.";
+      ? "Ese es el link publicado. Pega la URL de la barra del navegador con la presentación abierta."
+      : "No se encontró una presentación en ese link.";
   }
 
   return { publishedId, fileId };
@@ -83,14 +83,14 @@ function readAssetUrls(formData: FormData, errors: Errors) {
 
   const visitUrl = parseHttpsUrl(visitLink);
   if (!visitLink) {
-    errors.visitLink = "The visit link is required.";
+    errors.visitLink = "El link de visita es obligatorio.";
   } else if (!visitUrl) {
-    errors.visitLink = "Paste a full link starting with https://.";
+    errors.visitLink = "Pega un link completo que empiece por https://.";
   }
 
   const fileUrl = fileLink ? parseHttpsUrl(fileLink) : null;
   if (fileLink && !fileUrl) {
-    errors.fileLink = "Paste a full link starting with https://.";
+    errors.fileLink = "Pega un link completo que empiece por https://.";
   }
 
   return { visitUrl, fileUrl };
@@ -106,14 +106,14 @@ function readCategory(
   if (selected === NEW_CATEGORY) {
     const newName = readText(formData, "newCategory");
     if (!newName) {
-      errors.newCategory = "Name the new category.";
+      errors.newCategory = "Escribe el nombre de la nueva categoría.";
       return null;
     }
     return { newName };
   }
 
   if (!knownIds.has(selected)) {
-    errors.category = "Pick a category.";
+    errors.category = "Elige una categoría.";
     return null;
   }
   return { id: selected };
@@ -130,13 +130,13 @@ function readDraft(
   const visibility = readText(formData, "visibility") as Visibility;
 
   if (!title) {
-    errors.title = "A title is required.";
+    errors.title = "El nombre es obligatorio.";
   }
   if (visibility !== "internal" && visibility !== "public") {
-    errors.visibility = "Pick a visibility.";
+    errors.visibility = "Elige la visibilidad.";
   }
   if (type !== "deck" && type !== "asset") {
-    return { errors: { ...errors, type: "Pick a type." } };
+    return { errors: { ...errors, type: "Elige el tipo." } };
   }
 
   const common = {
@@ -179,7 +179,7 @@ export async function registerEntry(
   // Server Actions are POST endpoints reachable directly, so the page guard is not enough.
   const viewer = await getViewer();
   if (!viewer.isTeamMember) {
-    return { errors: { form: "You are not allowed to register entries." } };
+    return { errors: { form: "No tienes permiso para añadir entradas." } };
   }
 
   const categories = await listCategories();

@@ -18,6 +18,8 @@ anything worth testing is ceremony.
 
 - First and most valuable target: `lib/slug.ts`, written as a pure function precisely so it
   can be tested in isolation.
+- `matchesQuery` in `lib/search.ts` is the other pure function worth pinning down: the
+  whole-word tag rule, accented tags, and escaping of regex characters in the query.
 - Also worth covering: the validation in the `/new` Server Action — required title, valid
   URLs, slug uniqueness — since those are the system's input boundary.
 - Next 16 ships testing guides at `node_modules/next/dist/docs/01-app/02-guides/testing/`.
