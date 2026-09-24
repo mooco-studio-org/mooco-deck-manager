@@ -88,7 +88,7 @@ See [docs/commits-and-releases-workflow.md](docs/commits-and-releases-workflow.m
 
 ## How we work
 
-- **Communicate with the user in Spanish.** All code, comments, identifiers, file content, and commit messages stay in English.
+- **Communicate with the user in Spanish.** All code, comments, identifiers, docs, and commit messages stay in English. The one exception is user-facing UI copy (labels, messages, page titles), which is in Spanish.
 - **Confirm before destructive or shared-state actions** (force push, branch deletes, rewriting history, publishing). Local file edits and tests do not require confirmation.
 - **Git workflow actions require explicit user authorization.** Never commit, create branches, open PRs, or merge on your own initiative — when the work is ready, propose the action (scope + message/name) and wait for the user's go-ahead. This applies to every instance, including docs/backlog hygiene commits.
 - **Do not invent scope.** Stick to what was asked. Spotted issues outside scope: mention them, do not silently fix.
