@@ -19,7 +19,5 @@ New entries land here only after asking the user (see the corresponding rule in 
 
 ### Port of the reference index
 
-Ordered by dependency; the migration comes last.
-
 - [Upload a thumbnail for each presentation](feature-thumbnail-upload.md) — image upload in `/new`, stored in Supabase Storage.
-- [Migrate the reference index into the database](data-migrate-reference-index.md) — URLs to Slides ids; published ids are not in the data and must be recovered.
+- [Enrich the imported catalog from the reference index](data-migrate-reference-index.md) — descriptions, tags and thumbnails the import sheet did not carry.

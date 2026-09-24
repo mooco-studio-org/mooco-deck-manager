@@ -1,48 +1,39 @@
-# Migrate the reference index into the database
+# Enrich the imported catalog from the reference index
 
-Import the ~43 entries of the vanilla deck manager in `reference/vanilla-deck-manager/`
-into Supabase, converting its stored URLs into the Google Slides ids this app keeps.
+The catalog is already in the database — 21 decks and 4 reels, imported from the team's
+`decks-sheet` Google Sheet. What the sheet did not carry is still in the reference index
+(`reference/vanilla-deck-manager/mooco-links.html`): descriptions, search tags,
+thumbnails, and the old wrapper URLs.
 
 ## Why
 
-The vanilla index is the catalog the team uses today. Until its entries live here, this
-app is an empty shell and the team keeps maintaining two lists.
+Without tags, search only matches titles; without descriptions and thumbnails, every card
+shows "Sin descripción todavía." over a placeholder. The reference has 26 descriptions,
+tags on 42 of its 43 entries and a WebP thumbnail for all of them.
 
 ## When
 
-After [thumbnails](feature-thumbnail-upload.md) exist — the migration brings 43 of them.
-Migrating before then means migrating twice.
+Descriptions and tags: any time — the columns already exist. Thumbnails: after
+[thumbnail upload](feature-thumbnail-upload.md) settles where images live.
 
 ## Notes
 
-- Categories are already in the database, seeded with the reference's seven by
-  `supabase/migrations/20260924100000_seed_categories_and_require_category.sql`. Map each
-  reference entry to its category by name.
-- Source of truth is the JSON block `<script id="links-data">` in
-  `reference/vanilla-deck-manager/mooco-links.html` (`sheets.evergreen.categories[].links[]`),
-  not the `.xlsx`, which is an older snapshot. Shape documented in its `ARCHITECTURE.md` §4.
-- **Type by URL**: an `editableUrl` on `docs.google.com/presentation/…` makes the entry a
-  `deck` (35 entries); `drive.google.com/file/d/…` (4) or any other host makes it an
-  `asset`, with `url` as `visitUrl` and `editableUrl` as `fileUrl`. Entries with an empty
-  `url` (9) get classified by hand.
-- **File id** (decks): `extractFileId` in `lib/google-slides.ts` already handles the
-  `/edit` URLs.
-- **Published id is not in the data** (decks). `url` points to the old wrapper folders on
-  the main site (`https://mooco.studio/Capabilities/`, …), not to Google Slides. The
-  `2PACX-…` id has to be recovered from each wrapper page's embed iframe, or by
-  re-publishing the deck from Slides. AI Studio's empty `url` is intentional, per the
-  reference doc §13.
-- Write it as a one-off script that emits rows for review before inserting — the id
-  recovery will have gaps that need a human decision.
-- Slugs (decks only): generated with `lib/slug.ts` from the entry name, once, as for any
-  new deck. Worth checking for collisions (several entries share names like
-  "Capabilities"). Assets get no slug.
-- The wrapper URLs have already been sent to clients. Redirecting
-  `mooco.studio/<Folder>` to this app's `/<slug>` is a main-site change, but the
-  old-URL → slug mapping falls out of this migration and should be kept.
-- Thumbnails: the 43 WebP files in `reference/vanilla-deck-manager/thumbs/` go to
-  whatever storage [thumbnail upload](feature-thumbnail-upload.md) settles on, and each
-  entry's `thumb` filename maps to its row.
-- Default `visibility` for imported entries needs a decision; the client proposals likely
-  should not be `public`.
-- Once migrated and verified, decide whether `reference/` still earns its place in the repo.
+- Source is the JSON block `<script id="links-data">` in `mooco-links.html`
+  (`sheets.evergreen.categories[].links[]`); shape in its `ARCHITECTURE.md` §4.
+- Match reference entries to database rows by Google Slides file id (the reference's
+  `editableUrl`, through `extractFileId` in `lib/google-slides.ts`), not by title: the
+  imported titles were cleaned up and no longer match the reference names. Reels match by
+  the Drive file id in their URL.
+- The reference has more entries than the sheet (43 vs 25). The sheet is the list the team
+  chose, so unmatched reference entries are skipped.
+- Tags: the app stores them lowercased (`parseTags` in `app/new/actions.ts`); normalise the
+  same way.
+- Thumbnails live in `reference/vanilla-deck-manager/thumbs/*.webp`, named in each
+  reference entry's `thumb` field.
+- The reference `url` field holds the old wrapper folders on the main site
+  (`https://mooco.studio/Capabilities/`, …), which have already been sent to clients. The
+  same file-id match gives an old-URL → slug map, which is what a redirect on the main site
+  would need. Worth producing even if the redirect itself happens elsewhere.
+- Still missing from the catalog: **Sony** (Brand's Works) — it has no published link yet.
+  Add it from `/new` once it is published in Google Slides.
+- Once this is done, decide whether `reference/` still earns its place in the repo.

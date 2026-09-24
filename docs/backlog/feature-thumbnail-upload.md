@@ -10,8 +10,8 @@ only shows text.
 
 ## When
 
-Before [migrating the reference index](data-migrate-reference-index.md), which brings 43
-existing thumbnails.
+Before [enriching the imported catalog](data-migrate-reference-index.md), which brings 43
+existing thumbnails from the reference index.
 
 ## Notes
 
