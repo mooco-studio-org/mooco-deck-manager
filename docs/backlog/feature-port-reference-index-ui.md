@@ -11,8 +11,7 @@ thumbnails below. The current index is a plain list.
 
 ## When
 
-After [categories](feature-categories-and-groups.md) and
-[thumbnails](feature-thumbnail-upload.md) exist — most of the layout is built around them.
+After [thumbnails](feature-thumbnail-upload.md) exist — most of the layout is built around them.
 
 ## Notes
 

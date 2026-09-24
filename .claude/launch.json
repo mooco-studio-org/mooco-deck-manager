@@ -4,10 +4,15 @@
     {
       "name": "dev",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": [
-        "dev"
-      ],
+      "runtimeArgs": ["dev"],
       "port": 3000,
+      "autoPort": true
+    },
+    {
+      "name": "prod",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "yarn build && yarn start"],
+      "port": 3100,
       "autoPort": true
     }
   ]

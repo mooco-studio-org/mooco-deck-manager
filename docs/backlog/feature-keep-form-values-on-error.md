@@ -16,8 +16,9 @@ particular, since a file input cannot be refilled by the browser at all.
 
 ## Notes
 
-- The type selector in `app/new/form.tsx` already works around the reset by tying its
-  `defaultChecked` to state; the other fields have no such protection.
+- In `app/new/form.tsx`, the type radios and the category select already work around the
+  reset (the radios tie `defaultChecked` to state, the select is re-applied in an effect),
+  because they decide which fields are shown. The other fields have no such protection.
 - Usual approach: return the submitted values in `FormState` alongside `errors` and feed
   them back as `defaultValue`s. Check the Next 16 forms guide
   (`node_modules/next/dist/docs/01-app/02-guides/forms.md`) for the current recommendation.

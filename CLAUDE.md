@@ -13,7 +13,8 @@ kinds of entries:
 
 Routes:
 
-- `/` — index of all entries: name, links, and tags for searching and filtering.
+- `/` — index of all entries: name, links, search, and filters by category and tag.
+  Categories are ordered and may share a group label (e.g. "Portfolio").
 - `/new` — form to register a deck or an asset.
 - `/<slug>` — full-screen wrapper that plays a deck. This is the link sent to clients.
 
