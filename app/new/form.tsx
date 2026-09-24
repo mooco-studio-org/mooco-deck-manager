@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import type { CategoryGroup } from "@/lib/categories";
 import { registerEntry, type FormState } from "./actions";
 
@@ -43,6 +43,16 @@ export function NewEntryForm({ categoryGroups }: { categoryGroups: CategoryGroup
   const [state, formAction, pending] = useActionState(registerEntry, initialState);
   const [type, setType] = useState<EntryType>("deck");
   const [category, setCategory] = useState("");
+  const categorySelect = useRef<HTMLSelectElement>(null);
+
+  // React resets the form after every submission, which puts the select back on its
+  // placeholder while `category` still drives the fields shown. Re-apply the choice once
+  // the result arrives.
+  useEffect(() => {
+    if (categorySelect.current) {
+      categorySelect.current.value = category;
+    }
+  }, [state, category]);
 
   return (
     <form action={formAction} className="mt-8 flex flex-col gap-5">
@@ -172,12 +182,12 @@ export function NewEntryForm({ categoryGroups }: { categoryGroups: CategoryGroup
         <label htmlFor="category" className="text-sm font-medium">
           Category
         </label>
-        {/* Uncontrolled for the same reason as the type radios above. */}
         <select
           id="category"
           name="category"
           required
-          defaultValue={category}
+          ref={categorySelect}
+          defaultValue=""
           onChange={(event) => setCategory(event.target.value)}
           className={`mt-1 ${fieldClass}`}
         >
