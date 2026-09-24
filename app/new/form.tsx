@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, type ReactNode } from "react";
 import type { CategoryGroup } from "@/lib/categories";
+import { THUMBNAIL_MAX_BYTES, THUMBNAIL_TYPES } from "@/lib/thumbnail-limits";
 import { registerEntry, type FormState } from "./actions";
 
 const initialState: FormState = { errors: {} };
@@ -189,6 +190,37 @@ function AssetFields({ errors }: { errors: FormState["errors"] }) {
   );
 }
 
+// The Server Action checks the size too, but a file over the request body limit never
+// reaches it: Next rejects the whole request first. Stopping it here keeps that from
+// surfacing as a generic error page.
+function checkThumbnailSize(input: HTMLInputElement) {
+  const file = input.files?.[0];
+  input.setCustomValidity(
+    file && file.size > THUMBNAIL_MAX_BYTES ? "La miniatura no puede pesar más de 4 MB." : "",
+  );
+  input.reportValidity();
+}
+
+function ThumbnailField({ error }: { error?: string }) {
+  return (
+    <Field label="Miniatura" htmlFor="thumbnail" optional>
+      <input
+        id="thumbnail"
+        name="thumbnail"
+        type="file"
+        accept={THUMBNAIL_TYPES.join(",")}
+        onChange={(event) => checkThumbnailSize(event.currentTarget)}
+        className={`${inputClass} cursor-pointer file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-surface-alt file:px-3 file:py-1 file:text-xs file:font-semibold`}
+      />
+      <Hint>
+        JPG, PNG o WebP, hasta 4 MB. En la tarjeta se recorta a 16:10 desde arriba. Si el
+        envío falla por otro campo, vuelve a elegirla.
+      </Hint>
+      <FieldError message={error} />
+    </Field>
+  );
+}
+
 export function NewEntryForm({ categoryGroups }: { categoryGroups: CategoryGroup[] }) {
   const [state, formAction, pending] = useActionState(registerEntry, initialState);
   const [type, setType] = useState<EntryType>("deck");
@@ -251,6 +283,8 @@ export function NewEntryForm({ categoryGroups }: { categoryGroups: CategoryGroup
             className={`${inputClass} min-h-[60px] resize-y`}
           />
         </Field>
+
+        <ThumbnailField error={state.errors.thumbnail} />
 
         <Field label="Categoría" htmlFor="category">
           <select

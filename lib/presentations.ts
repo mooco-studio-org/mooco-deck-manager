@@ -11,6 +11,7 @@ type EntryBase = {
   description: string | null;
   tags: string[];
   visibility: Visibility;
+  thumbnailPath: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -54,6 +55,7 @@ type EntryRow = {
   file_url: string | null;
   tags: string[];
   visibility: Visibility;
+  thumbnail_path: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -66,6 +68,7 @@ function toEntry(row: EntryRow): Entry {
     description: row.description,
     tags: row.tags,
     visibility: row.visibility,
+    thumbnailPath: row.thumbnail_path,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -94,6 +97,7 @@ function toRow(
     description: draft.description,
     tags: draft.tags,
     visibility: draft.visibility,
+    thumbnail_path: draft.thumbnailPath,
   };
 
   if (draft.type === "asset") {
