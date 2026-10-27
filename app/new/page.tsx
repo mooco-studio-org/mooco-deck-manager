@@ -1,5 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getViewer } from "@/lib/viewer";
+import { NoAccess } from "@/app/_components/no-access";
+import { loginPath } from "@/app/login/next-path";
 import { groupCategories, listCategories } from "@/lib/categories";
 import { NewEntryForm } from "./form";
 
@@ -10,7 +14,15 @@ export const metadata: Metadata = {
 // Styled after the reference's add dialog: a card over a muted ground, rather than a
 // modal over the index, so /new stays a plain page.
 export default async function NewEntryPage() {
-  const categoryGroups = groupCategories(await listCategories());
+  const viewer = await getViewer();
+  if (!viewer.email) {
+    redirect(loginPath("/new"));
+  }
+  if (!viewer.isTeamMember && !viewer.isAdmin) {
+    return <NoAccess email={viewer.email} />;
+  }
+
+  const categoryGroups = groupCategories(await listCategories(viewer));
 
   return (
     <main className="flex flex-1 justify-center bg-surface-alt px-4 py-10 sm:py-16">

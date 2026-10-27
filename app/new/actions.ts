@@ -6,6 +6,7 @@ import { getViewer } from "@/lib/viewer";
 import {
   createEntry,
   type EntryDraft,
+  type Protection,
   type Viewer,
   type Visibility,
 } from "@/lib/presentations";
@@ -34,7 +35,11 @@ type Pending = {
   draft: DistributiveOmit<EntryDraft, "categoryId" | "thumbnailPath">;
   category: CategoryChoice;
   thumbnail: File | null;
+  protection: Protection;
 };
+
+const VISIBILITIES: Visibility[] = ["internal", "public", "restricted"];
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function readText(formData: FormData, field: string): string {
   const value = formData.get(field);
@@ -143,6 +148,32 @@ function readThumbnail(formData: FormData, errors: Errors): File | null {
   return file;
 }
 
+// Emails may be separated by commas, semicolons, spaces or new lines, as they usually are
+// when pasted from a mail client.
+function readAccess(formData: FormData, visibility: Visibility, errors: Errors): string[] {
+  if (visibility !== "restricted") {
+    return [];
+  }
+
+  const emails = readText(formData, "access")
+    .split(/[\s,;]+/)
+    .map((email) => email.toLowerCase())
+    .filter(Boolean);
+  const invalid = emails.filter((email) => !EMAIL.test(email));
+  if (invalid.length > 0) {
+    errors.access = `Revisa estos emails: ${invalid.join(", ")}.`;
+  }
+  return [...new Set(emails)];
+}
+
+// Only decks have a page to unlock; an asset opens wherever it is hosted.
+function readPassword(formData: FormData, type: string, visibility: Visibility): string | null {
+  if (type !== "deck" || visibility === "public") {
+    return null;
+  }
+  return readText(formData, "accessPassword") || null;
+}
+
 function readDraft(
   formData: FormData,
   knownCategoryIds: Set<string>,
@@ -157,9 +188,13 @@ function readDraft(
   if (!title) {
     errors.title = "El nombre es obligatorio.";
   }
-  if (visibility !== "internal" && visibility !== "public") {
+  if (!VISIBILITIES.includes(visibility)) {
     errors.visibility = "Elige la visibilidad.";
   }
+  const protection = {
+    access: readAccess(formData, visibility, errors),
+    password: readPassword(formData, type, visibility),
+  };
   if (type !== "deck" && type !== "asset") {
     return { errors: { ...errors, type: "Elige el tipo." } };
   }
@@ -177,34 +212,35 @@ function readDraft(
     const { publishedId, fileId } = readDeckIds(formData, errors);
     return Object.keys(errors).length > 0 || !publishedId || !category
       ? { errors }
-      : { draft: { ...common, type, publishedId, fileId }, category, thumbnail };
+      : { draft: { ...common, type, publishedId, fileId }, category, thumbnail, protection };
   }
 
   const { visitUrl, fileUrl } = readAssetUrls(formData, errors);
   return Object.keys(errors).length > 0 || !visitUrl || !category
     ? { errors }
-    : { draft: { ...common, type, visitUrl, fileUrl }, category, thumbnail };
+    : { draft: { ...common, type, visitUrl, fileUrl }, category, thumbnail, protection };
 }
 
 async function resolveCategoryId(
   choice: CategoryChoice,
   viewer: Viewer,
-): Promise<string> {
+): Promise<string | null> {
   if ("id" in choice) {
     return choice.id;
   }
   const category = await findOrCreateCategory(choice.newName, viewer);
-  return category.id;
+  return category?.id ?? null;
 }
 
 async function createWithThumbnail(
   draft: DistributiveOmit<EntryDraft, "thumbnailPath">,
   webp: Buffer | null,
+  protection: Protection,
   viewer: Viewer,
 ) {
   const thumbnailPath = webp ? await uploadThumbnail(webp) : null;
   try {
-    return await createEntry({ ...draft, thumbnailPath }, viewer);
+    return await createEntry({ ...draft, thumbnailPath }, protection, viewer);
   } catch (error) {
     if (thumbnailPath) {
       await deleteThumbnail(thumbnailPath);
@@ -223,7 +259,7 @@ export async function registerEntry(
     return { errors: { form: "No tienes permiso para añadir entradas." } };
   }
 
-  const categories = await listCategories();
+  const categories = await listCategories(viewer);
   const result = readDraft(formData, new Set(categories.map((category) => category.id)));
   if ("errors" in result) {
     return { errors: result.errors };
@@ -241,7 +277,15 @@ export async function registerEntry(
   }
 
   const categoryId = await resolveCategoryId(result.category, viewer);
-  const entry = await createWithThumbnail({ ...result.draft, categoryId }, webp, viewer);
+  if (!categoryId) {
+    return { errors: { newCategory: "Esa categoría no está disponible. Elige otra." } };
+  }
+  const entry = await createWithThumbnail(
+    { ...result.draft, categoryId },
+    webp,
+    result.protection,
+    viewer,
+  );
 
   // redirect() throws a control-flow exception, so revalidation has to happen first.
   revalidatePath("/");

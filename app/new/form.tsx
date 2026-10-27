@@ -103,10 +103,19 @@ const TYPE_CHOICES: Choice<EntryType>[] = [
   { value: "asset", label: "Asset" },
 ];
 
-const VISIBILITY_CHOICES: Choice<"internal" | "public">[] = [
+type Visibility = "internal" | "public" | "restricted";
+
+const VISIBILITY_CHOICES: Choice<Visibility>[] = [
   { value: "internal", label: "Interna" },
   { value: "public", label: "Pública" },
+  { value: "restricted", label: "Restringida" },
 ];
+
+const VISIBILITY_HINTS: Record<Visibility, string> = {
+  internal: "Todo el equipo de MOOCO.",
+  public: "Cualquiera con el link, sin iniciar sesión.",
+  restricted: "Solo los emails que añadas abajo, además de los admins.",
+};
 
 function CategoryOptions({ groups }: { groups: CategoryGroup[] }) {
   return groups.map((group) => {
@@ -224,6 +233,7 @@ function ThumbnailField({ error }: { error?: string }) {
 export function NewEntryForm({ categoryGroups }: { categoryGroups: CategoryGroup[] }) {
   const [state, formAction, pending] = useActionState(registerEntry, initialState);
   const [type, setType] = useState<EntryType>("deck");
+  const [visibility, setVisibility] = useState<Visibility>("internal");
   const [category, setCategory] = useState("");
   const categorySelect = useRef<HTMLSelectElement>(null);
 
@@ -332,13 +342,45 @@ export function NewEntryForm({ categoryGroups }: { categoryGroups: CategoryGroup
             name="visibility"
             legend="Visibilidad"
             choices={VISIBILITY_CHOICES}
-            value="internal"
+            value={visibility}
+            onChange={setVisibility}
           />
-          <Hint>
-            Interna: solo el equipo de MOOCO. Pública: se puede compartir fuera del estudio.
-          </Hint>
+          <Hint>{VISIBILITY_HINTS[visibility]}</Hint>
           <FieldError message={state.errors.visibility} />
         </div>
+
+        {visibility === "restricted" && (
+          <Field label="Emails con acceso" htmlFor="access">
+            <textarea
+              id="access"
+              name="access"
+              rows={3}
+              placeholder={"cliente@empresa.com\nana@mooco.studio"}
+              className={`${inputClass} min-h-[60px] resize-y`}
+            />
+            <Hint>
+              Uno por línea o separados por comas. Pueden ser de fuera de MOOCO. Tu email se
+              añade automáticamente.
+            </Hint>
+            <FieldError message={state.errors.access} />
+          </Field>
+        )}
+
+        {type === "deck" && visibility !== "public" && (
+          <Field label="Contraseña para clientes" htmlFor="accessPassword" optional>
+            <input
+              id="accessPassword"
+              name="accessPassword"
+              autoComplete="off"
+              placeholder="Ej: paramount2026"
+              className={inputClass}
+            />
+            <Hint>
+              Quien tenga el link y esta contraseña podrá ver el deck sin iniciar sesión. Se
+              guarda tal cual, para poder consultarla y reenviarla.
+            </Hint>
+          </Field>
+        )}
       </div>
 
       <div className="flex items-center justify-end gap-2 rounded-b-[20px] border-t border-line bg-surface-alt px-7 py-4">

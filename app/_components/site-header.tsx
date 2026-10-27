@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { logOut } from "@/app/login/actions";
 
 function Logo() {
   return (
@@ -42,10 +43,12 @@ export function SiteHeader({
   entryCount,
   categoryCount,
   query,
+  email,
 }: {
   entryCount: number;
   categoryCount: number;
   query: string;
+  email: string;
 }) {
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-page/95 backdrop-blur-md">
@@ -79,6 +82,15 @@ export function SiteHeader({
           </svg>
           Añadir
         </Link>
+        <form action={logOut} className="hidden lg:block">
+          <button
+            type="submit"
+            title={`Sesión iniciada como ${email}`}
+            className="text-xs font-medium whitespace-nowrap text-ink-muted hover:text-ink"
+          >
+            Salir
+          </button>
+        </form>
       </div>
     </header>
   );
