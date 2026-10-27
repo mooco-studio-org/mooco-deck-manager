@@ -8,7 +8,7 @@ New entries land here only after asking the user (see the corresponding rule in 
 
 - [Deploy to Vercel on the MOOCO subdomain](infra-deploy-vercel-subdomain.md) — auth is in place; what remains is the domain, env vars and OAuth redirect URLs.
 - [Edit and delete presentations](feature-edit-delete-presentations.md) — the MVP only creates and reads; fixing an entry means touching the database by hand.
-- [Admin panel for entries and categories](feature-admin-panel.md) — edit the catalog from the app instead of Supabase's Table Editor, with the app's validation.
+- [Admin panel for entries and categories](feature-admin-panel.md) — see and edit the catalog and who can access what from the app, instead of Supabase's Table Editor.
 - [Evaluate enabling Cache Components](framework-evaluate-cache-components.md) — off by default in Next 16.3.4, but where the framework is heading.
 - [Install the release tooling the workflow doc assumes](infra-release-tooling.md) — `yarn release` is documented but the script does not exist.
 - [Adapt the commit workflow examples to this project](docs-adapt-commits-workflow-examples.md) — the breaking-change examples describe a different repo.

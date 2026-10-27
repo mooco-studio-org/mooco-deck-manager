@@ -1,7 +1,8 @@
 # Admin panel for entries and categories
 
-A page in the app where the team can see every entry and category in a table and edit them
-directly, instead of going into the Supabase dashboard.
+A page in the app, for admins only, where they can see every entry and category in a table,
+see at a glance who can reach what, and edit it directly instead of going into the Supabase
+dashboard.
 
 ## Why
 
@@ -11,14 +12,28 @@ That editor writes raw rows: it skips the app's validation (Slides ids extracted
 links, `https:` only for assets, the slug rule), so a hand edit can leave data the app
 does not expect. And not everyone on the team should need dashboard access.
 
+Access control made this more pressing: which categories are admin-only, which decks are
+restricted and to whom, and which carry a password can only be checked today with SQL or
+the Table Editor — nothing in the app shows it, and a mistake there exposes a deck.
+
 ## When
 
-Once the reference index is migrated and the team is maintaining the catalog in this app —
-that is when hand edits become frequent. It must be behind Supabase Auth before it is ever
-deployed ([deploy](infra-deploy-vercel-subdomain.md) is already blocked on auth).
+Now that sign-in and roles are in place, whenever hand edits in the Table Editor start
+getting frequent. The access overview (below) is the first slice worth shipping on its own:
+read-only, no new write paths, and it answers the most common question.
 
 ## Notes
 
+- **Access overview first**, read-only:
+  - Categories with their `admin_only` flag, in display order, with how many entries each
+    holds.
+  - Every entry with its visibility, whether it has a password, and, for restricted
+    decks, its access list. Filter by "admin-only category", "restricted" and "has
+    password", so "what can a non-admin not see?" is one click.
+  - There is no "admin-only deck" as such: a deck is hidden from non-admins either by
+    sitting in an `admin_only` category (hidden from the index, but its link still follows
+    its visibility) or by being `restricted` with no one but admins on its list. The
+    overview should make that distinction visible, since only the second blocks the link.
 - Scope, not a generic database editor: typed forms per table that reuse the same
   validation as `/new`, going through `lib/` like every other write.
 - **Entries**: list with filters, edit and delete. The rules for that live in
@@ -39,6 +54,8 @@ deployed ([deploy](infra-deploy-vercel-subdomain.md) is already blocked on auth)
   password (`access_password`, stored in plain text so it can be shown here and resent).
   Manage the `admins` table and each category's `admin_only` flag. Admin-only actions;
   today all of this is done in the Table Editor.
-- Every mutation needs its own authorisation check inside the Server Action.
+- Admins only: the page checks `viewer.isAdmin` (`lib/viewer.ts`) and every mutation
+  repeats that check inside its Server Action — the page guard alone does not protect
+  the action. Link to it from the header only for admins.
 - Route: something like `/admin`. Add it to `RESERVED_SLUGS` in `lib/presentations.ts`
   so no deck can get it as a slug, and check no existing deck already has it.
