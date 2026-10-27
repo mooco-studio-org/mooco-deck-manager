@@ -141,6 +141,8 @@ export function EntryCard({ entry, categoryName }: { entry: Entry; categoryName:
           <span className="flex gap-1.5">
             {entry.type === "asset" && <MetaPill>Asset</MetaPill>}
             {entry.visibility === "internal" && <MetaPill>Interna</MetaPill>}
+            {entry.visibility === "restricted" && <MetaPill>Restringida</MetaPill>}
+            {entry.hasPassword && <MetaPill>Contraseña</MetaPill>}
           </span>
         </div>
         <h3 className="text-xl leading-[1.2] font-bold tracking-[-0.015em]">{entry.title}</h3>

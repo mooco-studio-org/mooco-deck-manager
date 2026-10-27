@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { getViewer } from "@/lib/viewer";
 import { listEntries, type Entry } from "@/lib/presentations";
 import { groupCategories, listCategories, type Category } from "@/lib/categories";
@@ -5,6 +6,8 @@ import { matchesQuery } from "@/lib/search";
 import { SiteHeader } from "./_components/site-header";
 import { CategoryGrid } from "./_components/category-grid";
 import { EntryCard } from "./_components/entry-card";
+import { NoAccess } from "./_components/no-access";
+import { loginPath } from "./login/next-path";
 
 function readParam(
   params: Record<string, string | string[] | undefined>,
@@ -47,11 +50,17 @@ function selectEntries(entries: Entry[], query: string, category: Category | und
 }
 
 export default async function Home({ searchParams }: PageProps<"/">) {
+  const viewer = await getViewer();
+  if (!viewer.email) {
+    redirect(loginPath("/"));
+  }
+  if (!viewer.isTeamMember && !viewer.isAdmin) {
+    return <NoAccess email={viewer.email} />;
+  }
+
   const params = await searchParams;
   const query = readParam(params, "q");
-
-  const viewer = await getViewer();
-  const [entries, categories] = await Promise.all([listEntries(viewer), listCategories()]);
+  const [entries, categories] = await Promise.all([listEntries(viewer), listCategories(viewer)]);
 
   const selected = categories.find((c) => c.id === readParam(params, "category"));
   const categoryNames = new Map(categories.map((c) => [c.id, c.name]));
@@ -59,7 +68,12 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   return (
     <>
-      <SiteHeader entryCount={entries.length} categoryCount={categories.length} query={query} />
+      <SiteHeader
+        entryCount={entries.length}
+        categoryCount={categories.length}
+        query={query}
+        email={viewer.email}
+      />
 
       <main className="mx-auto w-full max-w-[1400px] px-5 pb-24 sm:px-12">
         <section className="pt-14 pb-6">

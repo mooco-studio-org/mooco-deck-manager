@@ -1,8 +1,9 @@
 import { cache } from "react";
 import { slugify } from "./slug";
 import { supabase } from "./supabase";
+import { isUnlocked, rememberUnlock, sameSecret } from "./deck-unlock";
 
-export type Visibility = "internal" | "public";
+export type Visibility = "internal" | "public" | "restricted";
 
 type EntryBase = {
   id: string;
@@ -12,6 +13,8 @@ type EntryBase = {
   tags: string[];
   visibility: Visibility;
   thumbnailPath: string | null;
+  // Whether a client can open it with a password. The password itself stays in lib/.
+  hasPassword: boolean;
   createdAt: string;
   updatedAt: string;
 };
@@ -32,11 +35,25 @@ export type Asset = EntryBase & {
 
 export type Entry = Deck | Asset;
 
+// `email` is null for a visitor who has not signed in. Team membership comes from the email
+// domain; admins are listed in the admins table.
 export type Viewer = {
+  email: string | null;
   isTeamMember: boolean;
+  isAdmin: boolean;
 };
 
-type DraftOf<T extends Entry> = Omit<T, "id" | "createdAt" | "updatedAt" | "slug">;
+type DraftOf<T extends Entry> = Omit<
+  T,
+  "id" | "createdAt" | "updatedAt" | "slug" | "hasPassword"
+>;
+
+// Who can open an entry beyond what its visibility grants: the emails on a restricted
+// entry's list, and a password clients can type to open a non-public deck.
+export type Protection = {
+  access: string[];
+  password: string | null;
+};
 
 export type EntryDraft = DraftOf<Deck> | DraftOf<Asset>;
 
@@ -56,6 +73,7 @@ type EntryRow = {
   tags: string[];
   visibility: Visibility;
   thumbnail_path: string | null;
+  access_password: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -69,6 +87,7 @@ function toEntry(row: EntryRow): Entry {
     tags: row.tags,
     visibility: row.visibility,
     thumbnailPath: row.thumbnail_path,
+    hasPassword: row.access_password !== null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -88,6 +107,7 @@ function toEntry(row: EntryRow): Entry {
 function toRow(
   draft: EntryDraft,
   slug: string | null,
+  password: string | null,
 ): Omit<EntryRow, "id" | "created_at" | "updated_at"> {
   const common = {
     category_id: draft.categoryId,
@@ -98,6 +118,7 @@ function toRow(
     tags: draft.tags,
     visibility: draft.visibility,
     thumbnail_path: draft.thumbnailPath,
+    access_password: password,
   };
 
   if (draft.type === "asset") {
@@ -118,13 +139,42 @@ function toRow(
   };
 }
 
-function canView(entry: Entry, viewer: Viewer): boolean {
-  return viewer.isTeamMember || entry.visibility === "public";
+// Public entries are open to anyone. Internal ones need a MOOCO account. Restricted ones
+// need the viewer's email on the entry's access list — being on the team is not enough —
+// unless the viewer is an admin.
+function canView(entry: Entry, viewer: Viewer, granted: Set<string>): boolean {
+  switch (entry.visibility) {
+    case "public":
+      return true;
+    case "internal":
+      return viewer.isTeamMember || viewer.isAdmin;
+    case "restricted":
+      return viewer.isAdmin || granted.has(entry.id);
+  }
 }
+
+async function grantedEntryIds(viewer: Viewer, entryIds?: string[]): Promise<Set<string>> {
+  if (!viewer.email) {
+    return new Set();
+  }
+
+  let query = supabase.from("entry_access").select("entry_id").eq("email", viewer.email);
+  if (entryIds) {
+    query = query.in("entry_id", entryIds);
+  }
+
+  const { data, error } = await query.overrideTypes<{ entry_id: string }[], { merge: false }>();
+  if (error) {
+    throw error;
+  }
+  return new Set(data.map((row) => row.entry_id));
+}
+
+type FoundDeck = { deck: Deck; password: string | null };
 
 // generateMetadata and the page both look the deck up; cache() collapses that into one
 // query per request.
-const findDeck = cache(async (slug: string): Promise<Deck | null> => {
+const findDeck = cache(async (slug: string): Promise<FoundDeck | null> => {
   const { data, error } = await supabase
     .from("entries")
     .select()
@@ -135,12 +185,12 @@ const findDeck = cache(async (slug: string): Promise<Deck | null> => {
   if (error) {
     throw error;
   }
-  return data ? (toEntry(data) as Deck) : null;
+  return data ? { deck: toEntry(data) as Deck, password: data.access_password } : null;
 });
 
 // Static routes are matched before /[slug], so a deck given one of these slugs would be
 // unreachable. Keep in step with the top-level folders in app/.
-const RESERVED_SLUGS = ["new"];
+const RESERVED_SLUGS = ["new", "login", "auth"];
 
 async function uniqueSlug(title: string): Promise<string> {
   const base = slugify(title);
@@ -166,41 +216,132 @@ async function uniqueSlug(title: string): Promise<string> {
   return `${base}-${suffix}`;
 }
 
-export async function listEntries(viewer: Viewer): Promise<Entry[]> {
-  let query = supabase.from("entries").select().order("updated_at", { ascending: false });
-  if (!viewer.isTeamMember) {
-    query = query.eq("visibility", "public");
+async function adminOnlyCategoryIds(viewer: Viewer): Promise<Set<string>> {
+  if (viewer.isAdmin) {
+    return new Set();
   }
 
-  const { data, error } = await query.overrideTypes<EntryRow[], { merge: false }>();
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("admin_only", true)
+    .overrideTypes<{ id: string }[], { merge: false }>();
+
   if (error) {
     throw error;
   }
-  return data.map(toEntry);
+  return new Set(data.map((row) => row.id));
 }
 
-export async function getDeckBySlug(slug: string, viewer: Viewer): Promise<Deck | null> {
-  const deck = await findDeck(slug);
-  if (!deck || !canView(deck, viewer)) {
-    return null;
+// Entries in an admin-only category are left out for non-admins whatever their own
+// visibility: the category is hidden from the index as a whole. Opening a deck by its link
+// is decided by getDeckAccess, which looks at the deck alone.
+export async function listEntries(viewer: Viewer): Promise<Entry[]> {
+  const [{ data, error }, granted, hiddenCategories] = await Promise.all([
+    supabase
+      .from("entries")
+      .select()
+      .order("updated_at", { ascending: false })
+      .overrideTypes<EntryRow[], { merge: false }>(),
+    grantedEntryIds(viewer),
+    adminOnlyCategoryIds(viewer),
+  ]);
+
+  if (error) {
+    throw error;
   }
-  return deck;
+  return data
+    .map(toEntry)
+    .filter((entry) => !hiddenCategories.has(entry.categoryId))
+    .filter((entry) => canView(entry, viewer, granted));
 }
 
-export async function createEntry(draft: EntryDraft, viewer: Viewer): Promise<Entry> {
-  if (!viewer.isTeamMember) {
+// "locked" means the viewer may not open the deck but a password would let them in, so the
+// page asks for it instead of answering 404.
+export type DeckAccess =
+  | { status: "open"; deck: Deck }
+  | { status: "locked"; title: string }
+  | { status: "missing" };
+
+export async function getDeckAccess(slug: string, viewer: Viewer): Promise<DeckAccess> {
+  const found = await findDeck(slug);
+  if (!found) {
+    return { status: "missing" };
+  }
+
+  const { deck, password } = found;
+  const granted =
+    deck.visibility === "restricted" ? await grantedEntryIds(viewer, [deck.id]) : new Set<string>();
+  if (canView(deck, viewer, granted)) {
+    return { status: "open", deck };
+  }
+  if (password === null) {
+    return { status: "missing" };
+  }
+  return (await isUnlocked(deck.id, password))
+    ? { status: "open", deck }
+    : { status: "locked", title: deck.title };
+}
+
+// On success the browser is remembered, so the password is asked once per device.
+export async function unlockDeck(slug: string, attempt: string): Promise<boolean> {
+  const found = await findDeck(slug);
+  if (!found?.password || !sameSecret(attempt, found.password)) {
+    return false;
+  }
+  await rememberUnlock(found.deck.id, found.password);
+  return true;
+}
+
+async function grantAccess(entryId: string, emails: string[]): Promise<void> {
+  const { error } = await supabase
+    .from("entry_access")
+    .insert(emails.map((email) => ({ entry_id: entryId, email })));
+
+  if (error) {
+    throw error;
+  }
+}
+
+async function deleteEntry(entryId: string): Promise<void> {
+  const { error } = await supabase.from("entries").delete().eq("id", entryId);
+  if (error) {
+    throw error;
+  }
+}
+
+// The access list only matters for restricted entries. The creator is always added, so
+// whoever registers a restricted entry can still open it without being an admin.
+export async function createEntry(
+  draft: EntryDraft,
+  { access, password }: Protection,
+  viewer: Viewer,
+): Promise<Entry> {
+  if (!viewer.isTeamMember || !viewer.email) {
     throw new Error("Only team members can register entries");
   }
 
   const slug = draft.type === "deck" ? await uniqueSlug(draft.title) : null;
   const { data, error } = await supabase
     .from("entries")
-    .insert(toRow(draft, slug))
+    .insert(toRow(draft, slug, password))
     .select()
     .single<EntryRow>();
 
   if (error) {
     throw error;
   }
-  return toEntry(data);
+
+  const entry = toEntry(data);
+  if (entry.visibility === "restricted") {
+    try {
+      await grantAccess(entry.id, [...new Set([viewer.email, ...access])]);
+    } catch (accessError) {
+      // Without its access rows the entry would be visible to admins only; better that the
+      // whole registration fails and can be retried.
+      await deleteEntry(entry.id);
+      throw accessError;
+    }
+  }
+  return entry;
 }

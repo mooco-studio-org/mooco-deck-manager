@@ -6,6 +6,7 @@ export type Category = {
   name: string;
   groupName: string | null;
   position: number;
+  adminOnly: boolean;
 };
 
 type CategoryRow = {
@@ -13,18 +14,27 @@ type CategoryRow = {
   name: string;
   group_name: string | null;
   position: number;
+  admin_only: boolean;
 };
 
 function toCategory(row: CategoryRow): Category {
-  return { id: row.id, name: row.name, groupName: row.group_name, position: row.position };
+  return {
+    id: row.id,
+    name: row.name,
+    groupName: row.group_name,
+    position: row.position,
+    adminOnly: row.admin_only,
+  };
 }
 
-export async function listCategories(): Promise<Category[]> {
-  const { data, error } = await supabase
-    .from("categories")
-    .select()
-    .order("position")
-    .overrideTypes<CategoryRow[], { merge: false }>();
+// Admin-only categories do not exist for anyone else: not in the index, not in the form.
+export async function listCategories(viewer: Viewer): Promise<Category[]> {
+  let query = supabase.from("categories").select().order("position");
+  if (!viewer.isAdmin) {
+    query = query.eq("admin_only", false);
+  }
+
+  const { data, error } = await query.overrideTypes<CategoryRow[], { merge: false }>();
 
   if (error) {
     throw error;
@@ -37,8 +47,12 @@ function escapeLikePattern(value: string): string {
 }
 
 // A category typed in the form may already exist under different casing; reusing it
-// avoids near-duplicates like "Reels" and "reels" splitting the index.
-export async function findOrCreateCategory(name: string, viewer: Viewer): Promise<Category> {
+// avoids near-duplicates like "Reels" and "reels" splitting the index. Null when the name
+// matches an admin-only category the viewer may not use.
+export async function findOrCreateCategory(
+  name: string,
+  viewer: Viewer,
+): Promise<Category | null> {
   if (!viewer.isTeamMember) {
     throw new Error("Only team members can create categories");
   }
@@ -53,7 +67,7 @@ export async function findOrCreateCategory(name: string, viewer: Viewer): Promis
     throw findError;
   }
   if (existing) {
-    return toCategory(existing);
+    return existing.admin_only && !viewer.isAdmin ? null : toCategory(existing);
   }
 
   const { data: last, error: lastError } = await supabase
