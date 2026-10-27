@@ -35,6 +35,10 @@ deployed ([deploy](infra-deploy-vercel-subdomain.md) is already blocked on auth)
   refuses otherwise — surface that as a clear message).
 - Reordering is the fiddly part: moving a category means rewriting `position` for the ones
   in between; do it in one statement or an RPC so a failure cannot leave duplicates.
+- **Access**: edit a deck's visibility, its access list (`entry_access`) and its client
+  password (`access_password`, stored in plain text so it can be shown here and resent).
+  Manage the `admins` table and each category's `admin_only` flag. Admin-only actions;
+  today all of this is done in the Table Editor.
 - Every mutation needs its own authorisation check inside the Server Action.
 - Route: something like `/admin`. Add it to `RESERVED_SLUGS` in `lib/presentations.ts`
   so no deck can get it as a slug, and check no existing deck already has it.

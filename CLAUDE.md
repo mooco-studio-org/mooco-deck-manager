@@ -18,6 +18,20 @@ Routes:
   "Portfolio"). Tags are search metadata only; they are not shown.
 - `/new` — form to register a deck or an asset.
 - `/<slug>` — full-screen wrapper that plays a deck. This is the link sent to clients.
+- `/login`, `/auth/callback` — "Entrar con Google" and the OAuth return.
+
+Access:
+
+- The team signs in with Google; the OAuth app is Internal to the `mooco.studio`
+  Workspace. Clients never sign in.
+- Roles: **admins** (the `admins` table) see everything; **members** (any
+  `@mooco.studio` account) see public and internal entries, plus restricted ones whose
+  access list (`entry_access`) has their email. Only team members reach `/` and `/new`.
+- Admin-only categories (`categories.admin_only`) are hidden, with their entries, from
+  the index for non-admins. They do not change who can open a deck's link.
+- A non-public deck can carry a password (`entries.access_password`, plain text by
+  decision). Typing it on `/<slug>` opens the deck; a signed cookie remembers it for 30
+  days.
 
 All entry data lives in Supabase (schema in `supabase/migrations/`), read and written
 only through `lib/presentations.ts`. The index and the `/<slug>` pages are built from it.
@@ -30,10 +44,11 @@ only through `lib/presentations.ts`. The index and the `/<slug>` pages are built
 - **Tailwind CSS 4** (via `@tailwindcss/postcss`) — palette tokens in `app/globals.css`,
   taken from the reference index; light-only. Font: Onest via `next/font`.
 - **Supabase** — Postgres database for entries, via `@supabase/supabase-js`; thumbnails in
-  the public Storage bucket `thumbnails`, processed to 800px WebP with `sharp` on upload. Until
-  Supabase Auth lands, the server uses the secret key (`SUPABASE_SECRET_KEY`), which
-  bypasses RLS, so authorization lives in `lib/`. Migrations are applied by pasting them
-  into the Supabase SQL Editor, in filename order.
+  the public Storage bucket `thumbnails`, processed to 800px WebP with `sharp` on upload.
+  Auth via `@supabase/ssr`: the session lives in cookies, `proxy.ts` refreshes it, and
+  `lib/viewer.ts` reads it. Data is still read and written with the secret key
+  (`SUPABASE_SECRET_KEY`), which bypasses RLS, so authorization lives in `lib/`.
+  Migrations are applied by pasting them into the Supabase SQL Editor, in filename order.
 - **Yarn 1 (classic)** — dependencies require Node `^20.19 || ^22.13 || >=24`; on
   Node 23 install with `yarn install --ignore-engines`
 - ESLint 9 with `eslint-config-next`
@@ -47,6 +62,7 @@ only through `lib/presentations.ts`. The index and the `/<slug>` pages are built
 - `docs/` — team workflow docs and the [backlog](docs/backlog/README.md)
 - `reference/` — third-party implementations kept for reference only; excluded from
   ESLint and Tailwind, never imported or deployed
+- `proxy.ts` — Next 16's renamed middleware; only keeps the Supabase session fresh
 - Config at root: `next.config.ts`, `tsconfig.json`, `eslint.config.mjs`,
   `postcss.config.mjs`
 
